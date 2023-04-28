@@ -26,7 +26,7 @@ description: >- # used by seo meta and the atom feed
   A Personal Blog for Theo Lincke
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
-url: ""
+url: "https://lincketheo.github.io"
 
 github:
   username: lincketheo # change to your github username
