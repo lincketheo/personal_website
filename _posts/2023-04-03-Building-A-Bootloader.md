@@ -5,15 +5,15 @@ categories: [Computer Science, Operating Systems]
 tags: [bootloader]
 ---
 
-# Introduction
+## Introduction
 I'll build a bootloader from scratch for an Intel x86 32-bit processor in this post. You should have some assembly experience before embarking on your bootloader journey. 
 
-## Notes
+### Notes
 - Throughout this tutorial, I'll point you in the right direction for the two intel manuals I've been learning from ([^fn1] and [^fn2]) using the following syntax (section a.b.c [^fn1]). These are not comprehensive sections, but they are an excellent place to start looking. As always, the source of truth for this information is not some internet blog written by an amateur software engineer; it's the intel manuals. However, it is understandable not to want to read each one of their ~500-page manuals thoroughly. Start getting comfortable using them as a last resort if anything on the internet needs to be fully spelled out (I promise my tutorial will have flaws).
 
 - When I say "Byte 0, 1, 2..." I am assuming bytes start at zero. So "Byte 0" is equivalent to "The first byte ."Another example, "Byte 511," is the 512th byte. 
 
-## What are the responsibilities of the bootloader?
+### What are the responsibilities of the bootloader?
 
 All the bootloader does is begin executing after being loaded by BIOS, so you can do whatever you want in a bootloader. Technically, there's no such thing as a defined set of tasks that a bootloader must complete. So once BIOS has handed control off to the bootloader, you have free reign to do whatever you want as an OS developer. However, conceptually, the bootloader traditionally does three main things:
 
@@ -25,7 +25,8 @@ All the bootloader does is begin executing after being loaded by BIOS, so you ca
 
 5. Jumping to the location of the desired code (usually the kernel). In this tutorial, we'll write a _very_ simple kernel and store it directly after the bootloader in both memory and disk. 
 
-## Step 1: Getting BIOS to Recognize our Bootloader
+## Writing Our Bootloader
+### Step 0: Getting BIOS to Recognize our Bootloader
 Our storage device (flash drive, floppy disk, etc.) stores the bootloader on Sector 1 (512 bytes). BIOS recognizes bootloaders by the magic bytes `0xaa55` in bytes 510 and 511. Let's write an assembly program with `0xaa55` in bytes 510 and 511.
 
 First, let's define the word `0xaa55`:
@@ -90,7 +91,7 @@ times 510 ($-$$) db 0
 dw 0xaa55
 ```
 
-## Loading our Code from Disk
+### Step 1: Loading our "Kernel" Code from Disk
 Remember that only 512 bytes of our bootloader are loaded. Let's write a simple "kernel" after our program that prints the character 'Q' in real mode and jumps to 0x7e00 (0x7c00 + 512 bytes) - i.e., the code after our bootloader:
 ```
 jmp 0x7e00
@@ -200,7 +201,7 @@ printCharacter:
 
 Try rerunning it, and you'll see, as expected, our "kernel code" print a Q to the screen, then infinitely loop.
 
-## Set up the GDT
+### Step 2: Set up the GDT
 In this section, we'll define our get in a separate file called `gdt.asm`. Let's label our gdt and two sections:
 
 ```
@@ -324,9 +325,10 @@ data_seg equ _gdt_data_descriptor - _gdt_start
 
 We'll load the gdt in the next section
 
-## Entering Protected Mode
+### Step 3: Entering Protected Mode
 In protected mode, we'll do a couple of things.
 1. Clear the screen. Here's a utility function to do that:
+
 ```
 _clear_screen:
     mov ah, 0x00
@@ -334,18 +336,23 @@ _clear_screen:
     int 0x10
     ret
 ```
+
 2. disable interrupts
+
 ```
 cli
 ```
 
 3. Load the gdtr that we defined previously
+
 ```
 %include "gdt.asm"
 
 lgdt [gdtr]
 ```
+
 4. Enter protected mode by or-ing cr0 with 0x01:
+
 ```
 mov eax, cr0
 or eax, 0x1
@@ -362,7 +369,8 @@ _setup:
   ...
 ```
 
-To set up the stack, we'll set all the stack registers to the data segment:
+To set up the stack, we'll set all the stack registers to the data segment (0):
+
 ```
 mov ax, data_seg
 mov ds, ax
@@ -386,7 +394,7 @@ Finally, we can jump to our kernel!
 jmp 0x7e00
 ```
 
-## Wrapping it All Together
+### Step 4: Wrapping it All Together
 In protected mode, we can call int 0x10 to print a character. We need to set the vga to our character explicitly. Putting everything together:
 
 `boot.asm`:
@@ -483,6 +491,7 @@ _protected_mode:
 ```
 
 `gdt.asm`:
+
 ```
 ; GDT describes segments (currently code and data) and their permissions (you can't execute the
 ; data segment silly)
@@ -591,7 +600,7 @@ Clearing things up because I haven't seen it stated in the official Intel manual
 
 Intel says `MB` in their reference manuals because MiB wasn't introduced until later, and they didn't want to change all their manuals/references. For all intents and purposes, in the intel manuals, MB means 1024^2^, which conforms with intuition (e.g., 4 GBytes is $4\times2^{30}$ bytes, or $2^2 \times 2^{30}=2^{32}$ bytes, which fits on a 32-bit number).
 
-### References
+## References
 [^fn1]: [Intel Software Development Manual Volume 1A (Basic Architecture)](https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-vol-1-manual.html)
     - Not going to help you write code, but useful in learning about the basics of computer stuff
     
