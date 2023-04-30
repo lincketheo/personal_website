@@ -16,7 +16,7 @@ As always, I prefer rules to lengthy blog posts. These rules should be well-defi
 
 ### Rule 0: Clean Coding Patterns Make it Easy to Handle Exceptions in the Right Place
 
-_Clean code should separate functionality into understandable layers, and the layer responsible for causing the exceptions should handle it_. 
+_Clean code should separate functionality into understandable layers, and the layer responsible for causing the exception should handle it_. 
 
 For example, consider Android's layered Repository / DataSource [approach](https://developer.android.com/topic/architecture/data-layer). The single responsibility of a DataSource is to fetch data from a specific location. The single responsibility of a Repository is to combine multiple data sources into one "source of truth." Naturally, handling data source errors shouldn't happen in the Repository because that eliminates the rich logic contained inside the Repository.
 
@@ -32,12 +32,14 @@ _When you handle an exception, you need to actually do something in your code (u
 This rule comes from a common mistake. We tell ourselves as programmers that we'll handle all exceptions, but you should only be handling exceptions if you know what to do with them. Otherwise, we sweep fundamental problems with our code under the rug.
 
 We want to do _something_ in our code block with a failed network / local storage call. Something like showing a snack bar or pop-up. This step is where you need to consider the feature you're implementing. Each feature will have a different set of acceptance requirements. Let's assume our acceptance requirement is:
+
 When the user refreshes their feed and something (anything) goes wrong, a snack bar pops up
+
 We'll print to the screen to simplify our example rather than show a snack bar. There are a couple of solutions to this problem. I'll solve it by exposing a new exception (Be careful about this, I tend to prefer not writing new exceptions - see Rule 3 - but later on, we'll make this cleaner in Rule 2).
 
 [Example 3](https://github.com/lincketheo/kotlin-notes/blob/main/src/main/kotlin/exceptions/blogpost/example3/ExceptionsBlogPost.kt)
 
-### Rule 2: Sometimes Treat Exception Handling as a Responsibility
+### Rule 2: Consider Treating Exception Handling as a Responsibility
 _If you can, treat exception handling logic as a responsibility to make code more meaningful_
 
 Our exception-handling code is getting complex, so let's separate exception-handling into a responsibility. In SOLID design, it's hard to figure out what "responsibility" means in "Single Responsibility." Certain code smells mean you should start pulling out code blocks into their responsible class:
