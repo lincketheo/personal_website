@@ -30,26 +30,33 @@ All the bootloader does is begin executing after being loaded by BIOS, so you ca
 Our storage device (flash drive, floppy disk, etc.) stores the bootloader on Sector 1 (512 bytes). BIOS recognizes bootloaders by the magic bytes `0xaa55` in bytes 510 and 511. Let's write an assembly program with `0xaa55` in bytes 510 and 511.
 
 First, let's define the word `0xaa55`:
+
 ```
 dw 0xaa55
 ```
 
 We need to place this word on byte 510. We can do that by writing 510 bytes, then executing our command:
+
 ```
 times 510 db 0
 dw 0xaa55
 ```
 
 But now what happens? When we boot, there's no actual code to run! So let's add an infinite loop. In assembly, an infinite loop looks like this:
+
 ```
 lbl:
   jmp lbl
 ```
+
 Which can be shortened to:
+
 ```
 jmp $
 ```
+
 (i.e., jump to my current memory address). All together:
+
 ```
 jmp $
 times 510 db 0
@@ -57,6 +64,7 @@ dw 0xaa55
 ```
 
 Now wait a second; we've just written an instruction, followed by writing 510 bytes. In Von Neumann's Architecture, data and code are technically the same thing. So our instructions take up space in our program. The above code looks like this in memory `feeb000000...aa55` (where there are 1020 0's after `feeb`. That makes 514 bytes! (510 bytes of 0's + 2 bytes of `feeb` + 2 bytes of `aa55` = 514) See for yourself: compile this program:
+
 ```bash
 $ nasm boot.asm
 $ stat boot
@@ -64,7 +72,9 @@ $ stat boot
   Size: 514       	Blocks: 8          IO Block: 4096   regular file
 ...
 ```
+
 To fix this, we'll write `510 - number of written bytes`:
+
 ```
 jmp $
 times 510 ($-$$) db 0
@@ -72,14 +82,17 @@ dw 0xaa55
 ```
 
 Compile this file using nasm:
+
 ```bash
 $ nasm boot.asm
 ```
 
 And run it using qemu:
+
 ```bash
 $ qemu-system-i386 boot
 ```
+
 Nothing should happen, but importantly, you won't crash Qemu. Try changing `510` to `511` and see what happens. 
 
 One last thing. To do anything meaningful, we need to reference the address starting at 0x7c00 because that's where BIOS loads our program into memory. To do this, you can add the following to your bootloader:
@@ -93,6 +106,7 @@ dw 0xaa55
 
 ### Step 1: Loading our "Kernel" Code from Disk
 Remember that only 512 bytes of our bootloader are loaded. Let's write a simple "kernel" after our program that prints the character 'Q' in real mode and jumps to 0x7e00 (0x7c00 + 512 bytes) - i.e., the code after our bootloader:
+
 ```
 jmp 0x7e00
 times 510 - ($-$$) db 0
@@ -117,6 +131,7 @@ mov ch, 0
 ```
 
 To simplify things, we can load 0 into es (the base of our segment) and 0x7e00 into bx:
+
 ```
 mov ax, 0
 mov es, ax
@@ -124,11 +139,13 @@ mov bx, 0x7e00
 ```
 
 We'll set `ah` to 2 to indicate a read of the disk:
+
 ```
 mov ah, 0x02
 ```
 
 And indicate that we want to read one drive (al):
+
 ```
 mov al, 1
 ```
@@ -150,6 +167,7 @@ DRIVE_NUMBER:
 ```
 
 And finally, we call interrupt 0x13:
+
 ```
 int 0x14
 ```
@@ -216,6 +234,7 @@ gdt_end:
 ```
 
 Next, let's define what our `gdt` register (`gdtr`) should look like:
+
 ```
 gdtr:
 	dw _gdt_end - _gdt_start - 1
@@ -223,23 +242,27 @@ gdtr:
 ```
 
 And define the prefix to segmented (long) jumps:
+
 ```
 code_seg equ _gdt_code_descriptor - _gdt_start
 data_seg equ _gdt_data_descriptor - _gdt_start
 ```
 
 From (section 3.4.5[^fn2]), we know bits 0-15 consist of the first 16 bits of the segment limit. We want all 4 gigabytes, so our segment limit should be (11111... x20) = 0xfffff (5 f's). However, the processor puts this value and the later 1/2 byte value of the limit together with this one, so this first 16 bits is only 2 bytes (0xffff) to be combined with (0xf) later on in the gdt:
+
 ```
 _gdt_code_descriptor:
     dw 0xffff
 ```
 
 The following bits (16-31) are the first (of three) parts of the base address, which we will call 0:
+
 ```
 DW 0x0000
 ```
 
 At byte offset 4, bits 0-7, the second half of the base is defined:
+
 ```
 db 0x00
 ```
@@ -269,11 +292,13 @@ Next, bits 23-20 define (avl, l, d/b and g):
 - avl = 0: Just used by the processor
 
 Bits 19-16 represent the second part of the segment limit (0xf)
+
 ```
 db 0b11001111
 ```
 
 Finally, the third half of the base offset:
+
 ```
 db 0x00
 ```
@@ -281,6 +306,7 @@ db 0x00
 Using the flat memory model, we'll let both the code and data segment take up the same memory space. The data segment has a similar derivation to the code descriptor, with minor differences.
 
 Putting everything together:
+
 ```
 ; GDT describes segments (currently code and data) and their permissions (you can't execute the
 ; data segment silly)
@@ -398,6 +424,7 @@ jmp 0x7e00
 In protected mode, we can call int 0x10 to print a character. We need to set the vga to our character explicitly. Putting everything together:
 
 `boot.asm`:
+
 ```
 [org 0x7c00]
 mov [DRIVE_NUMBER], dl 
