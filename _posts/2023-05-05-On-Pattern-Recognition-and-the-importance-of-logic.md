@@ -1,8 +1,8 @@
 ---
 title: On Pattern Recognition and Closed Systems
 date: 2022-05-22
-categories: [Mathematics, Machine Learning]
-tags: [solar flares, machine learning]
+categories: [Philosophy]
+tags: [machine learning]
 ---
 
 _(Eagle, Turtle and Robot stop by Owl's house for a cup of tea and biscuits)._

@@ -1,8 +1,9 @@
 ---
 title: Building a 32 bit x86 Bootloader
 date: 2023-04-03
-categories: [Computer Science, Operating Systems]
-tags: [bootloader]
+layout: single
+categories: [Computer Science]
+tags: [operating systems, bootloader]
 ---
 
 ## Introduction

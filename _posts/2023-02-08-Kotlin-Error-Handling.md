@@ -1,7 +1,8 @@
 ---
 title: Kotlin and Error Handling
 date: 2023-02-08
-categories: [Computer Science, Software Engineering]
+layout: single
+categories: [Computer Science]
 tags: [error handling, kotlin]
 ---
 
