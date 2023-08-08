@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>http://localhost:4000/2022-05-22-Solar-Flare-Forecasting.html</loc>
+</url>
+<url>
+<loc>http://localhost:4000/2023-02-08-Kotlin-Error-Handling.html</loc>
+</url>
+<url>
+<loc>http://localhost:4000/2023-04-03-Building-A-Bootloader.html</loc>
+</url>
+<url>
+<loc>http://localhost:4000/2023-05-05-On-Pattern-Recognition-and-the-importance-of-logic.html</loc>
+</url>
+<url>
+<loc>http://localhost:4000/2023-05-06-nn-systems-cantor.html</loc>
+</url>
+<url>
+<loc>http://localhost:4000/2023-05-14-paradoxes.html</loc>
+</url>
+<url>
+<loc>http://localhost:4000/2023-05-25-measure-theory.html</loc>
+</url>
+<url>
+<loc>http://localhost:4000/2023-06-12-A-Baby-Regex-Matcher.html</loc>
+</url>
+<url>
+<loc>http://localhost:4000/2023-06-12-Distribution-Function.html</loc>
+</url>
+<url>
+<loc>http://localhost:4000/2023-08-03-Flows.html</loc>
+</url>
+<url>
+<loc>http://localhost:4000/2023-08-04-Flows2.html</loc>
+</url>
+</urlset>

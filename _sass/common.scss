@@ -1,0 +1,23 @@
+body {
+  font-family: -apple-system, Helvetica, arial, sans-serif;
+  font-size: 15px;
+  margin: 7px;
+  padding: 0;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+a {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.hidden {
+  display: none;
+}
+
+.wrap {
+  max-width: 700px;
+  margin: 0 auto;
+}

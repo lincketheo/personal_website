@@ -1,0 +1,135 @@
+#blog {
+  max-width: 700px;
+  margin: 0 auto;
+  margin-top: 80px;
+  margin-bottom: 100px;
+}
+
+#blog_nav {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  line-height: 24px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+#blog_nav_link {
+  color: rgba(0, 0, 0, 0.6);
+  text-decoration: none;
+  border-bottom: none;
+  font-size: 16px;
+  padding-right: 12px;
+}
+
+#blog_nav_link:hover {
+  font-weight: bold;
+}
+
+#blog_intro_quote {
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.4em;
+}
+
+#blog_intro {
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.4em;
+  margin-bottom: 40px;
+}
+
+#blog_quote {
+  margin-bottom: 30px;
+  margin-bottom: 5px;
+}
+
+.post_date {
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.post_title {
+  display: inline-block;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.post_title_link {
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.post_title_link:hover {
+  text-decoration: underline;
+}
+
+.post_subtitle {
+  font-size: 14px;
+  margin-top: 0;
+  margin-bottom: 25px;
+  line-height: 1.5em;
+}
+
+@media screen and (max-width: 700px) {
+  body {
+    margin: 0 7px;
+  }
+}
+
+.difficulty_ranking {
+  border-radius: 5px;
+  padding: 3px;
+  margin-left: 10px;
+}
+
+.post_title_rank {
+  text-decoration: none;
+}
+
+
+.difficulty_0 {
+  color: black;
+  background: #6bff93;
+}
+.difficulty_1 {
+  color: white;
+  background: #00947b;
+}
+.difficulty_2 {
+  color: white;
+  background: #000794;
+}
+.difficulty_3 {
+  color: black;
+  background: #ffaa00;
+}
+.difficulty_4 {
+  color: white;
+  background: #ff1900;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

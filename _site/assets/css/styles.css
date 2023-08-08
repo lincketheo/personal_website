@@ -1,0 +1,280 @@
+body {
+  font-family: -apple-system, Helvetica, arial, sans-serif;
+  font-size: 15px;
+  margin: 7px;
+  padding: 0;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+a {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.hidden {
+  display: none;
+}
+
+.wrap {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+#home {
+  max-width: 700px;
+  margin: 119px auto;
+}
+
+#home_list {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0 0 20px 0;
+}
+
+#home_list_link {
+  font-family: -apple-system, helvetica, arial, sans-serif;
+  margin-right: 25px;
+  padding-bottom: 5px;
+}
+
+#home_list_contact {
+  font-family: courier;
+  margin: 0;
+  padding-top: 5px;
+}
+
+#blog {
+  max-width: 700px;
+  margin: 0 auto;
+  margin-top: 80px;
+  margin-bottom: 100px;
+}
+
+#blog_nav {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  line-height: 24px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+#blog_nav_link {
+  color: rgba(0, 0, 0, 0.6);
+  text-decoration: none;
+  border-bottom: none;
+  font-size: 16px;
+  padding-right: 12px;
+}
+
+#blog_nav_link:hover {
+  font-weight: bold;
+}
+
+#blog_intro_quote {
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.4em;
+}
+
+#blog_intro {
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.4em;
+  margin-bottom: 40px;
+}
+
+#blog_quote {
+  margin-bottom: 30px;
+  margin-bottom: 5px;
+}
+
+.post_date {
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.post_title {
+  display: inline-block;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.post_title_link {
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.post_title_link:hover {
+  text-decoration: underline;
+}
+
+.post_subtitle {
+  font-size: 14px;
+  margin-top: 0;
+  margin-bottom: 25px;
+  line-height: 1.5em;
+}
+
+@media screen and (max-width: 700px) {
+  body {
+    margin: 0 7px;
+  }
+}
+.difficulty_ranking {
+  border-radius: 5px;
+  padding: 3px;
+  margin-left: 10px;
+}
+
+.post_title_rank {
+  text-decoration: none;
+}
+
+.difficulty_0 {
+  color: black;
+  background: #6bff93;
+}
+
+.difficulty_1 {
+  color: white;
+  background: #00947b;
+}
+
+.difficulty_2 {
+  color: white;
+  background: #000794;
+}
+
+.difficulty_3 {
+  color: black;
+  background: #ffaa00;
+}
+
+.difficulty_4 {
+  color: white;
+  background: #ff1900;
+}
+
+#home {
+  max-width: 700px;
+  margin: 119px auto;
+}
+
+#home_list {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0 0 20px 0;
+}
+
+#home_list_link {
+  font-family: -apple-system, helvetica, arial, sans-serif;
+  margin-right: 25px;
+  padding-bottom: 5px;
+}
+
+#home_list_contact {
+  font-family: courier;
+  margin: 0;
+  padding-top: 5px;
+}
+
+#post_intro {
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#post_intro h4 {
+  font-family: -apple-system, Helvetica, arial, sans-serif;
+}
+
+#post_intro .bylines .byline {
+  margin-right: 20px;
+  float: left;
+}
+
+#post_intro .bylines .byline h3,
+#post_intro .bylines .byline p {
+  margin: 0;
+  font-family: -apple-system, Helvetica, arial, sans-serif;
+}
+
+#post_intro .bylines .byline h3 {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+#post_intro .bylines .byline p {
+  font-size: 10px;
+  line-height: 1.6em;
+}
+
+.article {
+  font-size: 15px;
+  line-height: 1.6em;
+  color: rgba(0, 0, 0, 0.8);
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.article blockquote {
+  margin: 0;
+  padding: 0 1em;
+  color: #777;
+  border-left: 0.25em solid #ddd;
+}
+
+.article h2 {
+  font-size: 26px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  padding-bottom: 1rem;
+  padding-top: 1em;
+}
+
+.article .figure {
+  border-top: 1px solid hsla(0, 0%, 0%, 0.2);
+  border-bottom: 1px solid hsla(0, 0%, 0%, 0.2);
+  padding: 20px 0;
+}
+
+.article .figure .caption {
+  padding-top: 15px;
+  display: inline-block;
+  font-size: 13px;
+  line-heigh: 1.2em;
+}
+
+.article .figure .caption-label {
+  font-weight: bold;
+}
+
+.article .footnote {
+  line-height: 0;
+}
+
+.article div.highlight {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  font-size: 13px;
+  line-height: 1.3em;
+}
+
+.article ul {
+  padding: 0 15px;
+}
+
+.article hr {
+  border-bottom: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.7);
+  margin: 33px auto;
+  width: 70px;
+}
+
+/*# sourceMappingURL=styles.css.map */

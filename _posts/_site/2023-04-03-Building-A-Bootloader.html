@@ -1,0 +1,634 @@
+<h2 id="introduction">Introduction</h2>
+<p>I’ll build a bootloader from scratch for an Intel x86 32-bit processor in this post. You should have some assembly experience before embarking on your bootloader journey.</p>
+
+<h3 id="notes">Notes</h3>
+<ul>
+  <li>
+    <p>Throughout this tutorial, I’ll point you in the right direction for the two intel manuals I’ve been learning from (<sup id="fnref:fn1" role="doc-noteref"><a href="#fn:fn1" class="footnote" rel="footnote">1</a></sup> and <sup id="fnref:fn2" role="doc-noteref"><a href="#fn:fn2" class="footnote" rel="footnote">2</a></sup>) using the following syntax (section a.b.c <sup id="fnref:fn1:1" role="doc-noteref"><a href="#fn:fn1" class="footnote" rel="footnote">1</a></sup>). These are not comprehensive sections, but they are an excellent place to start looking. As always, the source of truth for this information is not some internet blog written by an amateur software engineer; it’s the intel manuals. However, it is understandable not to want to read each one of their ~500-page manuals thoroughly. Start getting comfortable using them as a last resort if anything on the internet needs to be fully spelled out (I promise my tutorial will have flaws).</p>
+  </li>
+  <li>
+    <p>When I say “Byte 0, 1, 2…” I am assuming bytes start at zero. So “Byte 0” is equivalent to “The first byte .”Another example, “Byte 511,” is the 512th byte.</p>
+  </li>
+</ul>
+
+<h3 id="what-are-the-responsibilities-of-the-bootloader">What are the responsibilities of the bootloader?</h3>
+
+<p>All the bootloader does is begin executing after being loaded by BIOS, so you can do whatever you want in a bootloader. Technically, there’s no such thing as a defined set of tasks that a bootloader must complete. So once BIOS has handed control off to the bootloader, you have free reign to do whatever you want as an OS developer. However, conceptually, the bootloader traditionally does three main things:</p>
+
+<ol>
+  <li>
+    <p>It loads whatever code runs <em>after</em> the bootloader (usually the operating system kernel) into memory. We’ll do this by loading the first Sector of our booting disk into memory (because our kernel is so tiny in this tutorial) using the <em>real mode</em> interrupt <a href="https://en.wikipedia.org/wiki/INT_13H#INT_13h_AH=02h:_Read_Sectors_From_Drive">0x13, ah=0x02</a>.</p>
+  </li>
+  <li>
+    <p>General system initialization (initializing the GDT (section 3.4.5<sup id="fnref:fn2:1" role="doc-noteref"><a href="#fn:fn2" class="footnote" rel="footnote">2</a></sup>), stack, segmentation (section 3.3<sup id="fnref:fn2:2" role="doc-noteref"><a href="#fn:fn2" class="footnote" rel="footnote">2</a></sup>), etc.) that you don’t want to do in the kernel. This tutorial initializes the GDT by defining a global <strong>code</strong> and <strong>data</strong> section. We’ll also set up the stack and assume the flat memory model without paging (section 3.2.2<sup id="fnref:fn2:3" role="doc-noteref"><a href="#fn:fn2" class="footnote" rel="footnote">2</a></sup>). It’s my goal to implement paging soon, and I’ll update this tutorial once I’ve set up paging.</p>
+  </li>
+  <li>
+    <p>Switching from <a href="https://en.wikipedia.org/wiki/Real_mode">16 bit real mode</a> to <a href="https://en.wikipedia.org/wiki/Protected_mode">32 bit protected mode</a> (section 9.9.1<sup id="fnref:fn2:4" role="doc-noteref"><a href="#fn:fn2" class="footnote" rel="footnote">2</a></sup>). This step is powerful because it disables all bios interrupts and lets us use all 32 bits and segmentation set up from our GDT. Without protected mode, we can only access 16 bits of address space, or <code class="language-plaintext highlighter-rouge">64 KiB</code> (pretty bad).</p>
+  </li>
+  <li>
+    <p>Jumping to the location of the desired code (usually the kernel). In this tutorial, we’ll write a <em>very</em> simple kernel and store it directly after the bootloader in both memory and disk.</p>
+  </li>
+</ol>
+
+<h2 id="writing-our-bootloader">Writing Our Bootloader</h2>
+<h3 id="step-0-getting-bios-to-recognize-our-bootloader">Step 0: Getting BIOS to Recognize our Bootloader</h3>
+<p>Our storage device (flash drive, floppy disk, etc.) stores the bootloader on Sector 1 (512 bytes). BIOS recognizes bootloaders by the magic bytes <code class="language-plaintext highlighter-rouge">0xaa55</code> in bytes 510 and 511. Let’s write an assembly program with <code class="language-plaintext highlighter-rouge">0xaa55</code> in bytes 510 and 511.</p>
+
+<p>First, let’s define the word <code class="language-plaintext highlighter-rouge">0xaa55</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dw 0xaa55
+</code></pre></div></div>
+
+<p>We need to place this word on byte 510. We can do that by writing 510 bytes, then executing our command:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>times 510 db 0
+dw 0xaa55
+</code></pre></div></div>
+
+<p>But now what happens? When we boot, there’s no actual code to run! So let’s add an infinite loop. In assembly, an infinite loop looks like this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lbl:
+  jmp lbl
+</code></pre></div></div>
+
+<p>Which can be shortened to:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>jmp $
+</code></pre></div></div>
+
+<p>(i.e., jump to my current memory address). All together:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>jmp $
+times 510 db 0
+dw 0xaa55
+</code></pre></div></div>
+
+<p>Now wait a second; we’ve just written an instruction, followed by writing 510 bytes. In Von Neumann’s Architecture, data and code are technically the same thing. So our instructions take up space in our program. The above code looks like this in memory <code class="language-plaintext highlighter-rouge">feeb000000...aa55</code> (where there are 1020 0’s after <code class="language-plaintext highlighter-rouge">feeb</code>. That makes 514 bytes! (510 bytes of 0’s + 2 bytes of <code class="language-plaintext highlighter-rouge">feeb</code> + 2 bytes of <code class="language-plaintext highlighter-rouge">aa55</code> = 514) See for yourself: compile this program:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nasm boot.asm
+<span class="nv">$ </span><span class="nb">stat </span>boot
+  File: boot
+  Size: 514       	Blocks: 8          IO Block: 4096   regular file
+...
+</code></pre></div></div>
+
+<p>To fix this, we’ll write <code class="language-plaintext highlighter-rouge">510 - number of written bytes</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>jmp $
+times 510 ($-$$) db 0
+dw 0xaa55
+</code></pre></div></div>
+
+<p>Compile this file using nasm:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nasm boot.asm
+</code></pre></div></div>
+
+<p>And run it using qemu:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>qemu-system-i386 boot
+</code></pre></div></div>
+
+<p>Nothing should happen, but importantly, you won’t crash Qemu. Try changing <code class="language-plaintext highlighter-rouge">510</code> to <code class="language-plaintext highlighter-rouge">511</code> and see what happens.</p>
+
+<p>One last thing. To do anything meaningful, we need to reference the address starting at 0x7c00 because that’s where BIOS loads our program into memory. To do this, you can add the following to your bootloader:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[org 0x7c00]
+jmp $
+times 510 ($-$$) db 0
+dw 0xaa55
+</code></pre></div></div>
+
+<h3 id="step-1-loading-our-kernel-code-from-disk">Step 1: Loading our “Kernel” Code from Disk</h3>
+<p>Remember that only 512 bytes of our bootloader are loaded. Let’s write a simple “kernel” after our program that prints the character ‘Q’ in real mode and jumps to 0x7e00 (0x7c00 + 512 bytes) - i.e., the code after our bootloader:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>jmp 0x7e00
+times 510 - ($-$$) db 0
+dw 0xaa55
+
+mov al, 'Q'
+call printCharacter
+jmp $
+
+printCharacter:
+    mov ah, 0x0e ; (teletype output)
+    int 0x10
+    ret
+</code></pre></div></div>
+
+<p>If we compile and run this, nothing happens. That’s because all the code after <code class="language-plaintext highlighter-rouge">dw 0xaa55</code> is on disk, not in memory. We need to load our disk into memory using int 0x13 to fix this. We want to read cylinder (ch) 0, head (DH) 0, and Sector (cl) 2. <em>Sector starts at 1</em>, and our bootloader was on sector 1, so our “kernel” is on sector 2:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mov cl, 2
+mov dh, 0
+mov ch, 0
+</code></pre></div></div>
+
+<p>To simplify things, we can load 0 into es (the base of our segment) and 0x7e00 into bx:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mov ax, 0
+mov es, ax
+mov bx, 0x7e00
+</code></pre></div></div>
+
+<p>We’ll set <code class="language-plaintext highlighter-rouge">ah</code> to 2 to indicate a read of the disk:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mov ah, 0x02
+</code></pre></div></div>
+
+<p>And indicate that we want to read one drive (al):</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mov al, 1
+</code></pre></div></div>
+
+<p>(Note: be careful about loading ah and al; they’re part of the same 16-bit register ax).</p>
+
+<p>Lastly, we need to know the drive number. I always imagine that the Bootloader had to call int 0x13 at least once to load our bootloader, so it already did the work of loading the drive number into dl. We don’t actually have a deterministic way of finding out dl. So instead, I like to store dl in memory immediately at the start of booting, then reference that section later in my code:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[org 0x7c00]
+mov [DRIVE_NUMBER], dl
+
+... other code
+mov dl, [DRIVE_NUMBER]
+... other code
+
+DRIVE_NUMBER:
+   db 0
+</code></pre></div></div>
+
+<p>And finally, we call interrupt 0x13:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>int 0x14
+</code></pre></div></div>
+
+<p>Putting it all together:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[org 0x7c00]
+mov [DRIVE_NUMBER], dl 
+
+call loadSector
+jmp 0x7e00
+
+loadSector:
+    ; load 1st sector into address 0x7e00
+    mov ax, 0
+    mov es, ax              
+    mov bx, 0x7e00 
+    mov ah, 0x02
+
+    ; Cylinder (0), head (0), Sector (2)
+    mov cl, 2
+    mov dh, 0
+    mov ch, 0
+
+    ; Read one Sector
+    mov al, 1
+    mov dl, [DRIVE_NUMBER]
+    
+    int 0x13
+    ret
+
+
+DRIVE_NUMBER:
+    db 0
+
+times 510 - ($-$$) db 0
+dw 0xaa55
+
+mov al, 'Q'
+call printCharacter 
+jmp $
+
+printCharacter:
+    mov ah, 0x0e ; Teletype output: http://www.ctyme.com/intr/rb-0106.htm
+    int 0x10     ; call interrupt
+    ret
+</code></pre></div></div>
+
+<p>Try rerunning it, and you’ll see, as expected, our “kernel code” print a Q to the screen, then infinitely loop.</p>
+
+<h3 id="step-2-set-up-the-gdt">Step 2: Set up the GDT</h3>
+<p>In this section, we’ll define our get in a separate file called <code class="language-plaintext highlighter-rouge">gdt.asm</code>. Let’s label our gdt and two sections:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>_gdt_start:
+   _gdt_null:
+      times 8 db 0
+   _gdt_code_descriptor
+	   ; TODO
+   _gdt_data_descriptor
+	   ; TODO
+gdt_end:
+</code></pre></div></div>
+
+<p>Next, let’s define what our <code class="language-plaintext highlighter-rouge">gdt</code> register (<code class="language-plaintext highlighter-rouge">gdtr</code>) should look like:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gdtr:
+	dw _gdt_end - _gdt_start - 1
+	dd _gdt_start
+</code></pre></div></div>
+
+<p>And define the prefix to segmented (long) jumps:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>code_seg equ _gdt_code_descriptor - _gdt_start
+data_seg equ _gdt_data_descriptor - _gdt_start
+</code></pre></div></div>
+
+<p>From (section 3.4.5<sup id="fnref:fn2:5" role="doc-noteref"><a href="#fn:fn2" class="footnote" rel="footnote">2</a></sup>), we know bits 0-15 consist of the first 16 bits of the segment limit. We want all 4 gigabytes, so our segment limit should be (11111… x20) = 0xfffff (5 f’s). However, the processor puts this value and the later 1/2 byte value of the limit together with this one, so this first 16 bits is only 2 bytes (0xffff) to be combined with (0xf) later on in the gdt:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>_gdt_code_descriptor:
+    dw 0xffff
+</code></pre></div></div>
+
+<p>The following bits (16-31) are the first (of three) parts of the base address, which we will call 0:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DW 0x0000
+</code></pre></div></div>
+
+<p>At byte offset 4, bits 0-7, the second half of the base is defined:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>db 0x00
+</code></pre></div></div>
+
+<p>Bits 15-12 (decreasing) of byte offset 4 are tricky. They consist of (s, dpl, and p):</p>
+
+<ul>
+  <li>p = 1: indicates that this is  a valid segment (if 0, an exception will be thrown)</li>
+  <li>dpl = 00: permission level 0 (most privileged)</li>
+  <li>s = 1: Code segment</li>
+</ul>
+
+<p>Bits 11-8 are the type bits:</p>
+
+<ul>
+  <li>e = 1: Indicates that this is an executable segment</li>
+  <li>dc = 0: Grows upwards</li>
+  <li>rw = 1: Readable</li>
+  <li>a = 0: Access bit - keep it 0; the system will set this bit to 1 when this segment is being accessed.</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>db 0b10011010
+</code></pre></div></div>
+
+<p>Next, bits 23-20 define (avl, l, d/b and g):</p>
+
+<ul>
+  <li>g = 1: This segment uses 4 KByte increments</li>
+  <li>d/b = 1: 32 Bit protected code segment (instead of 16)</li>
+  <li>l = 0: Long mode flag - I was told that this should be 1 if d/b is not 0</li>
+  <li>avl = 0: Just used by the processor</li>
+</ul>
+
+<p>Bits 19-16 represent the second part of the segment limit (0xf)</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>db 0b11001111
+</code></pre></div></div>
+
+<p>Finally, the third half of the base offset:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>db 0x00
+</code></pre></div></div>
+
+<p>Using the flat memory model, we’ll let both the code and data segment take up the same memory space. The data segment has a similar derivation to the code descriptor, with minor differences.</p>
+
+<p>Putting everything together:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>; GDT describes segments (currently code and data) and their permissions (you can't execute the
+; data segment silly)
+
+; References:
+; Chapter 3.4.5 (https://www.intel.com/content/www/us/en/content-details/774490/intel-64-and-ia-32-architectures-software-developer-s-manual-volume-3a-system-programming-guide-part-1.html?wapkw=segment%20descriptor)
+; And [OSDev wiki](https://wiki.osdev.org/Global_Descriptor_Table)
+_gdt_start:
+    _gdt_null:
+        times 8 db 0 
+
+    ; Segment descriptor - has a complex structure. 
+    ; See [Segment Descriptor](https://wiki.osdev.org/Global_Descriptor_Table)
+    _gdt_code_descriptor:
+        dw 0xffff
+        DW 0x0000
+        db 0x00
+        db 0b10011010
+        db 0b11001111
+        db 0x00
+
+    _gdt_data_descriptor:
+        dw 0xffff
+        DW 0x0000
+        db 0x00
+        db 0b10010010
+        db 0b11001111
+        db 0x00
+
+_gdt_end:
+
+
+gdtr:
+    dw _gdt_end - _gdt_start - 1
+    dd _gdt_start
+
+
+code_seg equ _gdt_code_descriptor - _gdt_start
+data_seg equ _gdt_data_descriptor - _gdt_start
+
+</code></pre></div></div>
+
+<p>We’ll load the gdt in the next section</p>
+
+<h3 id="step-3-entering-protected-mode">Step 3: Entering Protected Mode</h3>
+<p>In protected mode, we’ll do a couple of things.</p>
+<ol>
+  <li>Clear the screen. Here’s a utility function to do that:</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>_clear_screen:
+    mov ah, 0x00
+    mov al, 0x03
+    int 0x10
+    ret
+</code></pre></div></div>
+
+<ol>
+  <li>disable interrupts</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cli
+</code></pre></div></div>
+
+<ol>
+  <li>Load the gdtr that we defined previously</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>%include "gdt.asm"
+
+lgdt [gdtr]
+</code></pre></div></div>
+
+<ol>
+  <li>Enter protected mode by or-ing cr0 with 0x01:</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mov eax, cr0
+or eax, 0x1
+mov cr0, eax
+</code></pre></div></div>
+
+<p>We are now in 32-bit protected mode. Let’s set up the stack by executing a <strong>far jump</strong> using the gdt we defined (to the code segment):</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>jmp code_seg:_setup
+
+[bits 32]
+_setup:
+  ...
+</code></pre></div></div>
+
+<p>To set up the stack, we’ll set all the stack registers to the data segment (0):</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mov ax, data_seg
+mov ds, ax
+mov ss, ax
+mov es, ax
+mov fs, ax
+mov gs, ax
+</code></pre></div></div>
+
+<p>And set the stack starting at address 0x90000:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>; set up the stack base and pointer
+mov ebp, 0x90000
+mov esp, ebp
+</code></pre></div></div>
+
+<p>Finally, we can jump to our kernel!</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>jmp 0x7e00
+</code></pre></div></div>
+
+<h3 id="step-4-wrapping-it-all-together">Step 4: Wrapping it All Together</h3>
+<p>In protected mode, we can call int 0x10 to print a character. We need to set the vga to our character explicitly. Putting everything together:</p>
+
+<p><code class="language-plaintext highlighter-rouge">boot.asm</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[org 0x7c00]
+mov [DRIVE_NUMBER], dl 
+
+call loadSectors
+jmp protected_mode_setup
+
+loadSectors:
+    ; load sector into address 0x7e00
+    mov ax, 0
+    mov es, ax              
+    mov bx, 0x7e00 
+    mov ah, 0x02
+
+    ; Cylinder (0), head (0), Sector (2)
+    mov cl, 2
+    mov dh, 0
+    mov ch, 0
+
+    ; Read one Sector
+    mov al, 1
+    mov dl, [DRIVE_NUMBER]
+    
+    int 0x13
+    ret
+
+%include"protected_mode.asm"
+
+DRIVE_NUMBER:
+    db 0
+
+times 510 - ($-$$) db 0
+dw 0xaa55
+
+mov al, 'Q'
+mov ah, 0x0f
+mov [0xb8000], ax
+jmp $
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">protected_mode.asm</code>:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>_clear_screen:
+    mov ah, 0x00
+    mov al, 0x03
+    int 0x10
+    ret
+
+%include "gdt.asm"
+
+protected_mode_setup:
+    call _clear_screen
+    cli                     ; 1. disable interrupts
+
+    lgdt [gdtr]             ; 2. load GDT descriptor
+
+    ; Set protection enable bit in cr0 (control register 0)
+    ; (you can't just move 1 into cr0, so use a general purpose extended (32-bit) register)
+    ; TODO For paging, set bit 31 I think 
+    mov eax, cr0
+    or eax, 0x1            
+    mov cr0, eax
+    ; We are now in 32-bit protected mode
+
+    ; Far Jump to the code segment. 
+    ; I got confused on this line of code from the OSDevWiki
+    ; A far jump takes the form:
+    ; jmp &lt;gdt descriptor&gt;:offset
+    ; Where the get descriptor is the offset from the get root. For example
+    ; the first gdt descriptor would be 0x8 (because null entry)
+    ;
+    ; I couldn't find the official docs for this, though (TODO)
+    jmp code_seg:_protected_mode
+
+[bits 32]
+_protected_mode:
+    ; Set up the stack and data segments
+    mov ax, data_seg
+    mov ds, ax
+    mov ss, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    ; Set up the stack base and pointer
+    mov ebp, 0x90000
+    mov esp, ebp
+
+    ; Transfer control to the kernel :)
+    jmp 0x7e00 
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">gdt.asm</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>; GDT describes segments (currently code and data) and their permissions (you can't execute the
+; data segment silly)
+
+; References:
+; Chapter 3.4.5 (https://www.intel.com/content/www/us/en/content-details/774490/intel-64-and-ia-32-architectures-software-developer-s-manual-volume-3a-system-programming-guide-part-1.html?wapkw=segment%20descriptor)
+; And [OSDev wiki](https://wiki.osdev.org/Global_Descriptor_Table)
+_gdt_start:
+    _gdt_null:
+        times 8 db 0 
+
+    ; Segment descriptor - has a complex structure. 
+    ; See [Segment Descriptor](https://wiki.osdev.org/Global_Descriptor_Table)
+    _gdt_code_descriptor:
+        ; byte offset 0
+
+        ; bits 0-15: First 16 bits of segment limit
+        ; We want all 4 gigabytes, so our segment limit should
+        ; be (111111... x20) = 0xfffff (5 f's)
+        ; However, the processor puts this value and the later 1/2 byte value of the limit
+        ; together with this one, so this one is only 2 bytes (0xffff) to be combined with
+        ; (0xf) later on in the gdt
+        dw 0xffff
+        
+        ; bits 16-31 The first (of three) part of the base address (to be concatenated with
+        ; the later fields
+        DW 0x0000
+
+        ; byte offset 4
+        ; bits 0-7: The second half of the base
+        db 0x00
+
+        ; bits 15-12 (s, dpl, p)
+        ; p = 1 -&gt; indicates that this is a valid segment (if 0, an exception will be thrown)
+        ; dpl = 00 -&gt; Permission level 0 (most privileged) Might change this, not sure
+        ; s = 1 -&gt; Code or data segment (as opposed to a system segment)
+
+        ; bits 11-8 (Type): 
+        ; e = 1 -&gt; Indicates this is an executable segment
+        ; dc = 0 -&gt; Indicates that this segment grows upwards
+        ; rw = 1 -&gt; Readable
+        ; a = 0 -&gt; Access bit: Keep this 0; system sets it to 1 when being accessed
+        db 0b10011010
+
+        ; bits 23-20 (avl, l, d/b, g)
+        ; g = 1 -&gt; indicates that segment uses 4 KByte increments (ranges from 4KB to 4 GB) 
+        ; d/b = 1 -&gt; Indicates 32-bit protected code segment (as opposed to 16)
+        ; l = 0 -&gt; Long mode flag; I was told this should be 1 if d/b is not 0
+        ; avl = 0 (just used by the processor - no reason it's 0)
+        
+        ; bits 19-16 Segment limit pt 2 = 0xf (1111)
+        db 0b11001111
+        
+        ; bits : Third half of the base offset
+        db 0x00
+
+    _gdt_data_descriptor:
+        dw 0xffff
+        DW 0x0000
+        db 0x00
+        db 0b10010010
+        db 0b11001111
+        db 0x00
+
+_gdt_end:
+
+
+gdtr:
+    dw _gdt_end - _gdt_start - 1
+    dd _gdt_start
+
+
+code_seg equ _gdt_code_descriptor - _gdt_start
+data_seg equ _gdt_data_descriptor - _gdt_start
+</code></pre></div></div>
+
+<h2 id="appendix">Appendix</h2>
+<h3 id="cpu-architecture-jargon-words">CPU architecture jargon words</h3>
+<p><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-vol-1-manual.html">Here’s an excellent summary of intel cpu architecture</a> (<strong>chapter 2.1</strong>). Although, often in the intel software development manuals, you can’t just search for jargon terms, so the list below is a bit of a cross-reference for each jargon-y word and a word you can search for in the intel manual:</p>
+
+<p><a href="https://myonlineusb.wordpress.com/2011/06/08/what-is-the-difference-between-i386-i486-i586-i686-i786/">Here’s another nice explanation of i related jargon</a></p>
+
+<p>TLDR, intel’s names make no sense :). These words are frequently misused / loaded, and it’s just best to understand the history.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">x86</code>: (2.1.1) Refers to processors in the 8086 family. (80186 80286 80386 80486…). Usually, it means compatibility with the 80386 32-bit instruction set because 16-bit only is so old (TODO - this isn’t perfectly accurate)</li>
+  <li><code class="language-plaintext highlighter-rouge">i686</code>: (2.1.6) Intel686. P6 Family Microarchitecture on the Pentium Pro. One of the 6th generation of <code class="language-plaintext highlighter-rouge">x86</code> processors.</li>
+  <li><code class="language-plaintext highlighter-rouge">i386</code>: (2.1.3) Intel386. AKA 80386. First 32-bit (TODO - fact check)</li>
+  <li><code class="language-plaintext highlighter-rouge">x86_64</code> The 64-bit instruction set (sometimes called amd64) brother of <code class="language-plaintext highlighter-rouge">x86</code>
+    <ul>
+      <li>backward compatible with <code class="language-plaintext highlighter-rouge">x86</code> (i.e., <code class="language-plaintext highlighter-rouge">x86</code> instructions can run on <code class="language-plaintext highlighter-rouge">x86_64</code> processors)</li>
+    </ul>
+  </li>
+</ul>
+
+<p><a href="https://www.aliencoders.org/content/basic-information-about-i386-i686-and-x8664-architectures/">32-bit and 64-bit:</a></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- A 32-bit OS will run on a 32-bit or 64-bit processor without any problem.
+
+- A 32-bit application will run on a 32-bit or 64-bit OS without any problem.
+
+- But a 64-bit application will only run on a 64-bit OS, and a 64-bit OS will only run on a 64-bit processor
+</code></pre></div></div>
+
+<h3 id="the-mega-mebi-tera-tebi-confusion">The mega mebi tera tebi… confusion</h3>
+<p>Clearing things up because I haven’t seen it stated in the official Intel manuals</p>
+<ul>
+  <li>An <strong>official</strong> mega byte (MB) is 1000^2 bytes.</li>
+  <li>An <strong>official</strong> mebibyte (MiB) is 1024^2 bytes</li>
+</ul>
+
+<p>Intel says <code class="language-plaintext highlighter-rouge">MB</code> in their reference manuals because MiB wasn’t introduced until later, and they didn’t want to change all their manuals/references. For all intents and purposes, in the intel manuals, MB means 1024^2^, which conforms with intuition (e.g., 4 GBytes is $4\times2^{30}$ bytes, or $2^2 \times 2^{30}=2^{32}$ bytes, which fits on a 32-bit number).</p>
+
+<h2 id="references">References</h2>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:fn1" role="doc-endnote">
+      <p><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-vol-1-manual.html">Intel Software Development Manual Volume 1A (Basic Architecture)</a></p>
+      <ul>
+        <li>Not going to help you write code, but useful in learning about the basics of computer stuff</li>
+      </ul>
+      <p><a href="#fnref:fn1" class="reversefootnote" role="doc-backlink">&#8617;</a> <a href="#fnref:fn1:1" class="reversefootnote" role="doc-backlink">&#8617;<sup>2</sup></a></p>
+    </li>
+    <li id="fn:fn2" role="doc-endnote">
+      <p><a href="https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-3a-part-1-manual.pdf">Intel Software Development Manual Volume 3A (System Programming Guide Part 1)</a></p>
+      <ul>
+        <li>Good reference for GDT, protected mode, paging, etc. (The above also talks about paging and segmentation)</li>
+      </ul>
+      <p><a href="#fnref:fn2" class="reversefootnote" role="doc-backlink">&#8617;</a> <a href="#fnref:fn2:1" class="reversefootnote" role="doc-backlink">&#8617;<sup>2</sup></a> <a href="#fnref:fn2:2" class="reversefootnote" role="doc-backlink">&#8617;<sup>3</sup></a> <a href="#fnref:fn2:3" class="reversefootnote" role="doc-backlink">&#8617;<sup>4</sup></a> <a href="#fnref:fn2:4" class="reversefootnote" role="doc-backlink">&#8617;<sup>5</sup></a> <a href="#fnref:fn2:5" class="reversefootnote" role="doc-backlink">&#8617;<sup>6</sup></a></p>
+    </li>
+  </ol>
+</div>

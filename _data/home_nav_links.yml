@@ -1,0 +1,8 @@
+- name: Blog
+  link: /blog.html
+- name: About
+  link: /about.html
+- name: GitHub
+  link: https://github.com/lincketheo
+- name: RSS
+  link: /feed.xml

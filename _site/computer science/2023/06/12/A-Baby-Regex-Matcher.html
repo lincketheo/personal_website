@@ -1,0 +1,289 @@
+<html>
+  <head>
+    <title>A Simple Regex Matcher</title>
+    <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>A Simple Regex Matcher</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="A Simple Regex Matcher" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Introduction: A Simple Regex Matcher" />
+<meta property="og:description" content="Introduction: A Simple Regex Matcher" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-06-12T00:00:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="A Simple Regex Matcher" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-06-12T00:00:00-04:00","datePublished":"2023-06-12T00:00:00-04:00","description":"Introduction: A Simple Regex Matcher","headline":"A Simple Regex Matcher","mainEntityOfPage":{"@type":"WebPage","@id":"/computer%20science/2023/06/12/A-Baby-Regex-Matcher.html"},"url":"/computer%20science/2023/06/12/A-Baby-Regex-Matcher.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <meta charset='UTF-8'>
+<meta content='width=device-width, initial-scale=1' name='viewport'/>
+<meta name='description' content='Theo Lincke is an electrical engineering masters student at George Masons University.'>
+<meta name='keywords' content=''>
+<meta name='author' content='Theo Lincke'>
+
+
+    <link rel="stylesheet" href="/assets/css/styles.css">
+
+    <script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$']]
+    }
+  };
+</script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+  </head>
+  <body>
+    <div class='post wrap'>
+    <nav id="blog_nav">
+  
+  <a href="/index.html" id="blog_nav_link">
+    Home
+  </a>
+  
+  <a href="/about.html" id="blog_nav_link">
+    About
+  </a>
+  
+  <a href="/feed.xml" id="blog_nav_link">
+    RSS
+  </a>
+  
+</nav>
+
+
+    <div id='post_intro'>
+        <div class='wrap'>
+            <h1>A Simple Regex Matcher</h1>
+            <h4>Writing a simple regex matcher in C</h4>
+            <div class='bylines'>
+                <div class='byline'>
+                    <h3>Published</h3>
+                    <p>12 June 2023</p>
+                </div>
+            </div>
+            <div class='clear'></div>
+        </div>
+    </div>
+    <div class='wrap article'>
+        <h2 id="introduction-a-simple-regex-matcher">Introduction: A Simple Regex Matcher</h2>
+
+<p>In this post, I will define a regex and write a simple implementation in <code class="language-plaintext highlighter-rouge">C</code>.</p>
+
+<p>The following is the description of our Regex:</p>
+
+<hr />
+
+<p>Let $\Sigma$ denote the english alphabet,</p>
+
+<ul>
+  <li>
+    <p>A regex character $a$ can either be ‘.’, ‘*’ or $\in \Sigma$.</p>
+  </li>
+  <li>
+    <p>A Kleene star (‘*’) indicates that the preceeding character (there’s garunteed to be a preceeding character before a Kleene star) can repeat 0 to many times.</p>
+  </li>
+  <li>
+    <p>A ‘.’ can take the place of any character.</p>
+  </li>
+</ul>
+
+<p>For example:</p>
+
+<p>The following (input, regex) pairs match (where $\epsilon$ represents the empty string):</p>
+
+\[aaa \quad a*\]
+
+\[\epsilon \quad a*\]
+
+<hr />
+
+<h2 id="regular-expressions">Regular Expressions</h2>
+
+<p>Each Regular Expression $r$ constructs a language $L(r)$ of all strings that satisfy $r$.</p>
+
+<p>For example:</p>
+
+\[L(a*) = \{\epsilon, a, aa, aaa, \dots\}\]
+
+<p>A Regular Expression (RE) over some alphabet $\Sigma$ is defined via the following construction rules:</p>
+
+<h3 id="base-rules">Base Rules:</h3>
+
+<ul>
+  <li>$\epsilon$ is a RE</li>
+  <li>$\forall x \in \Sigma$, x is a RE</li>
+</ul>
+
+<h3 id="construction-rules">Construction Rules:</h3>
+
+<ul>
+  <li>$(r)|(s)$ is a RE, where</li>
+</ul>
+
+\[(r)|(s) = L(r) \cup L(s)\]
+
+<ul>
+  <li>$(r)(s)$ is a RE, where</li>
+</ul>
+
+\[(r)(s) = \{xy : \forall x,y \quad x \in L(r) \quad y \in L(s)\}\]
+
+<ul>
+  <li>$(r)*$ is a RE, where</li>
+</ul>
+
+\[(r)* = L(\epsilon) \cup L(r) \cup L(rr) \cup \dots\]
+
+<p>Because we don’t have support for paranthetical expressions in our simple regex, I’m calling our regex a “simple” regex. I’m unsure if there is an official term for Regexes that don’t support grouping.</p>
+
+<h2 id="writing-the-algorithm">Writing the Algorithm</h2>
+
+<p>I’ll do this recursively. I want my “algorithm explained” series to really dive into the thought process of how to solve the problem, but remember that it’s obviously much <em>easier</em> to reason through as someone who’s solved the problem already. This is <em>obviously</em> not how simple my thought process was, rather a set of concrete “aha’s” I went through and their subsequent effect on my code.</p>
+
+<blockquote>
+  <p>Side Note: For me writing this blog post, I reasoned through how I could make my code much better / readable. It’s an interesting observation that my first (successful) attempt looked like this:</p>
+</blockquote>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bool matches_r(const char *input, const char *regex) {
+  // Invalid cases
+  if (*regex == '*') {
+    printf("Invalid Regex\n");
+    return false;
+  }
+
+  if (*regex == '\0') {
+    return *input == '\0';
+  }
+
+  if (*regex != '\0' &amp;&amp; *(regex + 1) != '*') {
+    if (*regex == '.') {
+      if (*input == '\0') {
+        return false;
+      }
+      return matches_r(input + 1, regex + 1);
+    } else {
+      if (*input != *regex) {
+        return false;
+      }
+      return matches_r(input + 1, regex + 1);
+    }
+  }
+
+  if (*regex != '\0' &amp;&amp; *(regex + 1) == '*') {
+    bool valid_first = (*input != '\0') &amp;&amp; (*input == *regex || *regex == '.');
+    return matches_r(input, regex + 2) || (valid_first &amp;&amp; matches_r(input + 1, regex));
+  }
+
+  printf("Can't reach this spot");
+  return false;
+}
+</code></pre></div></div>
+
+<blockquote>
+  <p>You’ll see my subsequent attempt at the end, and the obvious reduction in gross logic is a direct consequence of writing this blog post and re doing my work. All that to say, re writing code and writing about your code does wonders!</p>
+</blockquote>
+
+<p>Our outline will look something like this:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bool</span> <span class="nf">matches</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">input</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">regex</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// todo</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Notice that no matter where you are in the string, you need at least two characters to know what to match. That is, ‘aa’ and ‘a*’ mean two very different things. Therefore, we can eliminate the idea of a context free DSA in our regex.</p>
+
+<p>In order to find all of our recursive conditions, observe that (where ‘a’ represents any character in $\Sigma$):</p>
+
+<ol>
+  <li>The first regex character could be a null terminator (‘\0’)</li>
+  <li>The first regex character could be ‘.’ and the next character could not be ‘*’
+    <ul>
+      <li>E.g. “.a” or “.”</li>
+    </ul>
+  </li>
+  <li>The first regex character could be ‘a’ and the next character could not be ‘*’
+    <ul>
+      <li>E.g. “aa” or “a”</li>
+    </ul>
+  </li>
+  <li>The first regex character could be ‘.’ and the next character could be ‘*’
+    <ul>
+      <li>E.g. “.*”</li>
+    </ul>
+  </li>
+  <li>The first regex character could be ‘a’ and the next character could be ‘*’
+    <ul>
+      <li>E.g. “a*”</li>
+    </ul>
+  </li>
+</ol>
+
+<p>And the logic for each case (quotes around “Check” to denote ambiguity):</p>
+
+<ol>
+  <li>Check if the input string is also empty - if it is, we’ve matched our string</li>
+  <li>“Check” the first character, then run <code class="language-plaintext highlighter-rouge">matches(input + 1, regex + 1)</code></li>
+  <li>Similar to (2)</li>
+  <li>If the first character doesn’t match, then we can simply check <code class="language-plaintext highlighter-rouge">matches(input, regex + 2)</code> because the kleene star can match 0 characters. Otherwise, if the character matches, then we can run <code class="language-plaintext highlighter-rouge">matches(input + 1, regex)</code>. Also note that if we execute (1-3) correctly, we can ensure we’re not overflowing our buffer.</li>
+  <li>Similar to (4)</li>
+</ol>
+
+<p>At a high level, here’s our solution:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bool matches_r(const char *input, const char *regex) {
+  if (*regex == '\0')
+    return *input == '\0';
+
+  bool match = (*regex == *input || *regex == '.');
+
+  if (*(regex + 1) != '*')
+    return match &amp;&amp; matches_r(input + 1, regex + 1);
+
+  return matches_r(input, regex + 2) || (match &amp;&amp; matches_r(input + 1, regex));
+}
+</code></pre></div></div>
+
+<p>But we slightly glossed over case (1). What if input is ‘\0’ and regex matches case 2, we’ll overflow our buffer (mentioned in (4)). _All we need to do is avoid adding anything to <code class="language-plaintext highlighter-rouge">input</code> if <code class="language-plaintext highlighter-rouge">input = '\0'</code>. It looks like <code class="language-plaintext highlighter-rouge">match</code> acts as a short circuit for each case this could happen, so let’s just add the condition there:</p>
+
+<h3 id="the-final-code">The Final Code:</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bool matches_r(const char *input, const char *regex) {
+  if (*regex == '\0')
+    return *input == '\0';
+
+  bool first_matches = (*input != '\0') &amp;&amp; (*regex == *input || *regex == '.');
+
+  if (*(regex + 1) != '*') 
+    return first_matches &amp;&amp; matches_r(input + 1, regex + 1);
+
+  return matches_r(input, regex + 2) || (first_matches &amp;&amp; matches_r(input + 1, regex));
+}
+</code></pre></div></div>
+
+<h2 id="memoizing">Memoizing</h2>
+
+<p>Classically, in dynamic programming, you’d recognize that you’re executing duplicate code, so you “memoize” that code for later. That is, our problem has <strong>optimal substructure</strong>. I’ll do this problem again in the future while accounting for this property.</p>
+
+
+    </div>
+
+<script src="https://utteranc.es/client.js"
+        repo="lincketheo/personal_website"
+        issue-term="pathname"
+        label="comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+</div>
+
+  </body>
+</html>

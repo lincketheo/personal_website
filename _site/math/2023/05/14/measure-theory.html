@@ -1,0 +1,302 @@
+<html>
+  <head>
+    <title>Lp Spaces Prerequisites</title>
+    <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Lp Spaces Prerequisites</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Lp Spaces Prerequisites" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Introduction: Some Measure Theory" />
+<meta property="og:description" content="Introduction: Some Measure Theory" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-05-14T00:00:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Lp Spaces Prerequisites" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-05-14T00:00:00-04:00","datePublished":"2023-05-14T00:00:00-04:00","description":"Introduction: Some Measure Theory","headline":"Lp Spaces Prerequisites","mainEntityOfPage":{"@type":"WebPage","@id":"/math/2023/05/14/measure-theory.html"},"url":"/math/2023/05/14/measure-theory.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <meta charset='UTF-8'>
+<meta content='width=device-width, initial-scale=1' name='viewport'/>
+<meta name='description' content='Theo Lincke is an electrical engineering masters student at George Masons University.'>
+<meta name='keywords' content=''>
+<meta name='author' content='Theo Lincke'>
+
+
+    <link rel="stylesheet" href="/assets/css/styles.css">
+
+    <script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$']]
+    }
+  };
+</script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+  </head>
+  <body>
+    <div class='post wrap'>
+    <nav id="blog_nav">
+  
+  <a href="/index.html" id="blog_nav_link">
+    Home
+  </a>
+  
+  <a href="/about.html" id="blog_nav_link">
+    About
+  </a>
+  
+  <a href="/feed.xml" id="blog_nav_link">
+    RSS
+  </a>
+  
+</nav>
+
+
+    <div id='post_intro'>
+        <div class='wrap'>
+            <h1>Lp Spaces Prerequisites</h1>
+            <h4>A review of basic analysis, measure theory, and some exploration on the Borel Sigma Algebra</h4>
+            <div class='bylines'>
+                <div class='byline'>
+                    <h3>Published</h3>
+                    <p>14 May 2023</p>
+                </div>
+            </div>
+            <div class='clear'></div>
+        </div>
+    </div>
+    <div class='wrap article'>
+        <h2 id="introduction-some-measure-theory">Introduction: Some Measure Theory</h2>
+
+<p>In this post, I will first lay the basic analysis groundwork needed to understand Borel Sigma Algebras (and of course, I will also explain sigma algebras). Then I will explain the basics of Measure Theory necessary for defining $L^p$ and weak-$L^p$ spaces in subsequent blog posts.</p>
+
+<p>Most of this post’s reference material comes from my own notes on Analysis, but these notes came from <a href="https://www.amazon.com/Analysis-Third-Texts-Readings-Mathematics/dp/9380250649">Terence Tao’s</a> series on analysis. These are very readable introductions to analysis and I highly recommend them.</p>
+
+<h2 id="metric-spaces-and-topologies-a-prerequisite-to-the-borel-sigma-algebra">Metric Spaces and Topologies (A prerequisite to the Borel Sigma Algebra)</h2>
+
+<h3 id="metric-space">Metric Space</h3>
+
+<p>Roughly speaking, a metric is a way to measure distance between two things and map that distance to the real line. It maps an ordered pair of a set $X$ to the real numbers: $d : X \times X \rightarrow \mathbb{R}$ given the following rules:</p>
+
+<p>For any two $x, y \in X$:</p>
+
+<ol>
+  <li>Positive: $d(x, y) \geq 0$</li>
+  <li>Positive Definiteness: $d(x, y) = 0 \leftrightarrow x = y$</li>
+  <li>Commutativity: $d(x, y) = d(y, x)$</li>
+  <li>Triangle Inequality: $d(x, y) \leq d(x, z) + d(z, y)$</li>
+</ol>
+
+<p>We call metrics with properties 1-3 <em>Semi Metrics</em>. A <em>Metric Space</em> is a set X equipped with a metric $d$, abbreviated $(X, d)$.</p>
+
+<h3 id="topology">Topology</h3>
+
+<p>Roughly speaking, a <em>topology of a metric space</em> is a collection of “balls” that overlap one another. These “balls” are defined via a metric.</p>
+
+<p>For the metric space $(X, d)$, the “Ball centered at $x_0 \in X$ with radius r” is abbreviated $B(x_0, r)$ and is defined:</p>
+
+\[B(x_0, r) := \{y \in X : d(x_0, r) \lt r\}\]
+
+<p>Note the strict inequality. We call this an open set.</p>
+
+<p>For a subset $E \subset X$:</p>
+
+<ul>
+  <li>The <em>Complement</em> of $E$ is</li>
+</ul>
+
+\[E^c := X - E\]
+
+<ul>
+  <li>The <em>Interior</em> of $E$ is</li>
+</ul>
+
+\[Int(E) := \{x \in X : \exists r &gt; 0 : B(x, r) \subset E\}\]
+
+<p>Intuitively, an element of $X$ is in the interor if we can make a substantially small “ball” around $x$ that <em>fits</em> inside $E$. Although I haven’t defined border yet, intuitively, think about a value on the border of $E$. No matter how small you make a “ball” surrounding $x$, you won’t be able to fit the entire “Ball” inside $E$!</p>
+
+<ul>
+  <li>The <em>Exterior</em> of $E$ is</li>
+</ul>
+
+\[Ext(E) := \{x \in X : \exists r &gt; 0 \, st \, B(x, r) \subset E^c\}\]
+
+<p>Intuitively, a point is an exterior point to $E$ if it’s an interior point to $E^c$</p>
+
+<ul>
+  <li>The <em>Boundary</em> of $E$ is</li>
+</ul>
+
+\[\partial E := X - (Int(E) \cup Ext(E))\]
+
+<p>The <em>Topological Space $X = (X, F)$</em> is a set $X$ with a collection $F$ of subsets of $X$ called <em>open sets</em> that obey the following axioms:</p>
+
+<ol>
+  <li>$\emptyset, X$ are open</li>
+  <li>The intersection of any finite number of open sets is open.</li>
+  <li>The union of any arbitrary number of open sets is open.</li>
+</ol>
+
+<p>The collection $F$ is called a <em>topology</em> on X.</p>
+
+<h2 id="sigma-algebras-a-prerequisite-to-measure-spaces">Sigma Algebras (A prerequisite to Measure Spaces)</h2>
+
+<p>We know about power sets of some set $X$ $P(X)$, and some of us know about <em>partitions</em> of a set $X$ (a set of pair-wise disjoint subsets of $X$ that collectively “cover” $X$)</p>
+
+<blockquote>
+  <p>Note: n-wise disjoint means if you select any $n$ elements from a set of sets, their intersection is empty.</p>
+</blockquote>
+
+\[\{0, 1, 2\}, \{3, 4, 5\}\]
+
+<blockquote>
+  <p>is 2-wise disjoint (pair-wise).</p>
+</blockquote>
+
+\[\{0, 1, 2\}, \{2, 3, 4\}, \{4, 5, 0\}\]
+
+<blockquote>
+  <p>is <em>not</em> 2-wise disjoint, but it is 3-wise disjoint.</p>
+</blockquote>
+
+<p>A sigma algebra ($\sigma -$algebra) ($\epsilon$) of a set $X$ is a set of subsets of $X$ that:</p>
+
+<ul>
+  <li>Is closed under complement:</li>
+</ul>
+
+\[(B \in \epsilon) \rightarrow (B^c \in \epsilon)\]
+
+<ul>
+  <li>Is closed under countable unions:</li>
+</ul>
+
+\[(\forall_{j \in \mathbb{N}}(B_j \in \epsilon)) \rightarrow ((\cup_{i = 0}^{\infty}B_i) \in \epsilon)\]
+
+<ul>
+  <li>Is closed under countable intersections:</li>
+</ul>
+
+\[(\forall_{j \in \mathbb{N}}(B_j \in \epsilon)) \rightarrow ((\cap_{i = 0}^{\infty}B_i) \in \epsilon)\]
+
+<ul>
+  <li>Contains $\emptyset$ and $X$:</li>
+</ul>
+
+\[\emptyset, X \in \epsilon\]
+
+<p>Some examples of trivial sigma algebra’s are:</p>
+
+<ol>
+  <li>The power set of $X$, $P(X)$</li>
+  <li>The set:</li>
+</ol>
+
+\[\{X, \emptyset\}\]
+
+<p>Theorem A: The intersection of a (countably finite or infinite) set of $\sigma$-algebras is also a $\sigma$-algebra.</p>
+
+<p>A $\sigma$-algebra <em>generated</em> by a set $M$ of arbitrary subsets of $X$ is the smallest $\sigma$-algebra that contains $M$ and is denoted in this post as $\sigma(M)$. In other words, the generated $\sigma$-algebra $\sigma(M)$ is the intersection of all $\sigma$-algebra’s that contain $M$ as a subset.</p>
+
+\[\sigma(M) = \cap_{(M \subset A) \land (A \: is \: \sigma-algebra)}A\]
+
+<p>This intersection is not the empty set because $M$ is an element of the powerset $P(X)$, which is a $\sigma$-algebra who shares an intersection with all other $\sigma$-algebras.</p>
+
+<p>For example, consider the sets:</p>
+
+\[X = \{a, b, c, d\} \qquad M = \{\{a\}, \{b\}\}\]
+
+<p>The $\sigma$-algebra generated by $M$ is:</p>
+
+\[=\{\emptyset, X, \{a\}, \{b\}, \{a, b\}, \{b, c, d\}, \{a, c, b\}, \{c, d\}\}\]
+
+<p>All this really means is some $\sigma$-algebra that contains $M$. I got to the above set of sets by first defining:</p>
+
+\[\sigma(M) = \{\emptyset, X...\}\]
+
+<p>By definition of a $\sigma$-algebra, then adding $M$:</p>
+
+\[\sigma(M) = \{\emptyset, X, \{a\}, \{b\}...\}\]
+
+<p>Then completing the $\sigma$-algebra by including complements and unions of sets.</p>
+
+<h2 id="the-borel-sigma-algebra">The Borel Sigma Algebra</h2>
+
+<p>The open sets $F$ of a topologic space $(X, F)$ generate a $\sigma$-algebra called the <strong>Borel $\sigma$ algebra</strong>.</p>
+
+<h2 id="measure-space">Measure Space</h2>
+
+<h3 id="intuition">Intuition</h3>
+
+<p>Intuitively, mathematicians needed a way to “measure” a set. Consider the Lebesque integral as an example motivator. We wish to stray away from the classical Riemann integral because it often breaks with discontinuities. A Riemann integral can be applied to a function with <em>countably finite</em> discontinuities, but consider the function:</p>
+
+\[f(x) = 0 \quad if \quad x \in \mathbb{Q}, \quad 1 \quad if \quad x \in \mathbb{R}-\mathbb{Q}\]
+
+<p>Clearly, this function is not Riemann integrable. What if we had a notion of measuring the set $\mathbb{Q}$ and $\mathbb{R}$? Particularly, if we say there are more real numbers than rational numbers (from Cantor’s argument - see my previous post), we know that this function must be (at least) more than $\frac{1}{2}$. Intuitively, we <em>know</em> there must be some way to “measure” the area of this 2 dimensional “curve” that a Riemann integral just doesn’t support.</p>
+
+<p>The lebesque integral abstracts out the term measurement and starts with the y-axis. When $f(x) = 0$, we know</p>
+
+\[x \in \mathbb{Q}_{[0,1]}\]
+
+<p>and if $f(x) = 1$ we know that</p>
+
+\[x \in \mathbb{R}_{[0,1]}\]
+
+<p>so why not just “measure” the two sets $\mathbb{Q}$ and $\mathbb{R}-\mathbb{Q}$ on the interval $[0, 1]$? In general, a measure space equipts a set with some notion of length, area, volume, etc.</p>
+
+\[\int_{[0,1]}f(x)d\mu(x)\]
+
+<p>Where $\mu(x)$ is the <em>measure</em> of some set element of some $sigma$-alebgra of the measurable space $[0,1]$</p>
+
+<h3 id="definition">Definition</h3>
+
+<p>A measure space is a collection of $(X, \epsilon, \mu)$. Where $X$ is a set, $\epsilon$ is a $\sigma$-algebra of $X$ and $\mu$ is a function $\mu : \epsilon \rightarrow [0, \infty]$ such that:</p>
+
+<ol>
+  <li>$\mu(\emptyset) = 0$</li>
+  <li>$\mu(\cup_{n=1}^{\infty}B_n) = \sum_{n=1}^{\infty}\mu(B_n)$</li>
+</ol>
+
+<p>For any pairwise disjoint elements $B_n \in \epsilon$</p>
+
+<ul>
+  <li>$\mu$ is a (positive) <em>measure</em> on $X$</li>
+  <li>$B \in epsilon$ is called a <em>measurable set</em></li>
+</ul>
+
+<p>A measure space with set $X$ is called $\sigma$-<em>finite</em> if there is some sequence of measurable subsets $X_n \subset X$ such that:</p>
+
+\[X = \cup_{n=1}^{\infty}X_n\]
+
+\[\mu(X_n) \lt \infty\]
+
+<p>A function $f: X \rightarrow \mathbb{R}$ is called <em>measurable</em> if it’s preimage is a measurable set (that is</p>
+
+\[\{x \in X : f(x) &gt; \lambda\}\]
+
+<p>is measurable for all $\lambda \in \mathbb{R}$)</p>
+
+<p>A function $f: X \rightarrow \mathbb{C}$ is called <em>measurable</em> if it’s real and imaginary parts are measurable.</p>
+
+
+    </div>
+
+<script src="https://utteranc.es/client.js"
+        repo="lincketheo/personal_website"
+        issue-term="pathname"
+        label="comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+</div>
+
+  </body>
+</html>

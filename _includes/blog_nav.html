@@ -1,0 +1,8 @@
+<nav id="blog_nav">
+  {% for item in site.data.blog_nav_links %}
+  <a href="{{ item.link }}" id="blog_nav_link">
+    {{ item.name }}
+  </a>
+  {% endfor %}
+</nav>
+

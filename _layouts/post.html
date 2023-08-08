@@ -1,0 +1,32 @@
+---
+layout: default
+---
+<div class='post wrap'>
+    {% include blog_nav.html %}
+    <div id='post_intro'>
+        <div class='wrap'>
+            <h1>{{ page.title }}</h1>
+            <h4>{{ page.subtitle }}</h4>
+            <div class='bylines'>
+                <div class='byline'>
+                    <h3>Published</h3>
+                    <p>{{ page.date |  date: '%d %B %Y' }}</p>
+                </div>
+            </div>
+            <div class='clear'></div>
+        </div>
+    </div>
+    <div class='wrap article'>
+        {{ content }}
+    </div>
+
+<script src="https://utteranc.es/client.js"
+        repo="lincketheo/personal_website"
+        issue-term="pathname"
+        label="comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+</div>

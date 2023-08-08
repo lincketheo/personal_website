@@ -1,0 +1,6 @@
+- name: Home 
+  link: /index.html
+- name: Blog 
+  link: /blog.html
+- name: RSS
+  link: /feed.xml

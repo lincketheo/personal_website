@@ -1,0 +1,284 @@
+<html>
+  <head>
+    <title>An Elegant Solution to the Producer Consumer Problem</title>
+    <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>An Elegant Solution to the Producer Consumer Problem</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="An Elegant Solution to the Producer Consumer Problem" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Introduction" />
+<meta property="og:description" content="Introduction" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-08-04T00:00:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="An Elegant Solution to the Producer Consumer Problem" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-08-04T00:00:00-04:00","datePublished":"2023-08-04T00:00:00-04:00","description":"Introduction","headline":"An Elegant Solution to the Producer Consumer Problem","mainEntityOfPage":{"@type":"WebPage","@id":"/computer%20science/2023/08/04/Flows2.html"},"url":"/computer%20science/2023/08/04/Flows2.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <meta charset='UTF-8'>
+<meta content='width=device-width, initial-scale=1' name='viewport'/>
+<meta name='description' content='Theo Lincke is an electrical engineering masters student at George Masons University.'>
+<meta name='keywords' content=''>
+<meta name='author' content='Theo Lincke'>
+
+
+    <link rel="stylesheet" href="/assets/css/styles.css">
+
+    <script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$']]
+    }
+  };
+</script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+  </head>
+  <body>
+    <div class='post wrap'>
+    <nav id="blog_nav">
+  
+  <a href="/index.html" id="blog_nav_link">
+    Home
+  </a>
+  
+  <a href="/about.html" id="blog_nav_link">
+    About
+  </a>
+  
+  <a href="/feed.xml" id="blog_nav_link">
+    RSS
+  </a>
+  
+</nav>
+
+
+    <div id='post_intro'>
+        <div class='wrap'>
+            <h1>An Elegant Solution to the Producer Consumer Problem</h1>
+            <h4>How flows solve two specific problems</h4>
+            <div class='bylines'>
+                <div class='byline'>
+                    <h3>Published</h3>
+                    <p>04 August 2023</p>
+                </div>
+            </div>
+            <div class='clear'></div>
+        </div>
+    </div>
+    <div class='wrap article'>
+        <h2 id="introduction">Introduction</h2>
+
+<p>On my quest to understand why flows are so idiomatic to kotlin and elegant in general, I’ve stumbled on the following two observations:</p>
+
+<ol>
+  <li>Coroutines / Structured concurrency seamlessly solves the following rule:
+<strong>For n blocking calls, the maximally performant program will consume n threads</strong>.</li>
+</ol>
+
+<p>Rule (1) is seemingly obvious, until you think about a problem that has an unbounded number of blocking calls. Rule 1 also seems like it relates only to coroutines, but it is partly solved by the introduction of backpressure, which flows (and other patterns) make easier to implement using blocking consumers.</p>
+
+<ol>
+  <li>Flows allow us to seperate responsibility within producers / consumers because <strong>the producer within a flow doesn’t need to know what the consumer is doing</strong>, allowing more than one programmer to work on n different consumer functions at the same time.</li>
+</ol>
+
+<p>All the rules of <strong>S</strong> in <strong>SOLID</strong> design apply to rule (2). One might say the concept of a flow is more “<em>clean</em>”.</p>
+
+<h2 id="flows---a-cleaner-solution-to-the-producer-consumer-problem">Flows - a Cleaner Solution to the Producer Consumer Problem</h2>
+
+<p>Recently I was working on a problem of loading images into memory while a Machine Learning model was
+training. I wanted to load images from memory in an asynchronous way that didn’t violate the
+<a href="https://www.reactivemanifesto.org/">Reactivity Manifesto</a>. The basic premises are:</p>
+
+<ol>
+  <li>One producer blocks to retrieve data</li>
+  <li>One consumer blocks to transform said recieved data</li>
+  <li>It’s faster to load n images than 1 image at a time</li>
+</ol>
+
+<p>A first naive solution looks something this (I’ll demo this first half in python’s asyncio library because it
+has some interesting properties):</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>async def produce():
+        images = await get_images()
+        for image in images:
+                await consume(image)
+
+async def consume(image):
+        # do blocking consuming stuff
+
+async def get_images():
+        # do blocking fetching stuff
+</code></pre></div></div>
+
+<p>But recall from the reactive manifesto:</p>
+
+<blockquote>
+  <p>The benefits of asynchronous processing would be negated if the communication of back pressure were synchronous</p>
+</blockquote>
+
+<p>Although it seems like this code is async (it uses asyncio!), it really isn’t. It’s equivalent to writing:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def produce():
+        # do blocking fetching stuff
+        for image in images:
+                # do blocking consuming stuff
+</code></pre></div></div>
+
+<p>which is just regular synchronous code! (One of the reasons the async await pattern can sort of trick you into
+thinking you’re writing async code). Let’s try again and think about our code executing two threads at the same time
+(effectively halving the time it takes to run):</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>images = []
+async def produce():
+        task = asyncio.create_task(get_images())
+        for image in images:
+                await consume(image)
+        images = await task
+
+async def consume(image):
+        # do blocking consuming stuff
+
+async def get_images():
+        # do blocking fetching stuff
+</code></pre></div></div>
+
+<p>We see in this above example that the <em>first</em> time around, images is empty, so the for loop around consume does
+nothing, but the <code class="language-plaintext highlighter-rouge">task</code> from asyncio <em>begins fetching the next data before starting to process the current data</em>.
+Sort of like the bounded buffer problem loading half the buffer even before the consumer is ready to start consuming
+data from the buffer. That means our program execution is cut linearly (if the execution time of fetching
+images is the same as consuming them, then the time of the second solution is theoretically
+$\frac{1}{2} \times \text{original solution time} + \text{first image fetch}$).</p>
+
+<p>There are other solutions using larger buffers etc, but effectively, if we have two blocking calls and two
+threads, we’re maximizing our resources (one of the reasons coroutines / structured concurrency
+is so neat, because it maximizes the number of “threads” wrt the number of blocking calls).</p>
+
+<p>A seemingly obvious rule is:</p>
+
+<p><strong>If we have n blocking calls, we can maximize the benefits of asynchronous code by running on n threads at the same time</strong></p>
+
+<p>It’s simple, but we missed it in our first example.</p>
+
+<h2 id="using-flows">Using flows</h2>
+
+<p>The above example is meant to illustrate a solution to backpressure.</p>
+
+<blockquote>
+  <p><strong>Backpressure</strong> in software engineering is defined as the ability of a data consumer that cannot keep up with incoming data to send a signal to the data producer to slow down the rate of the data elements. <a href="https://elizarov.medium.com/simple-design-of-kotlin-flow-4725e7398c4c">source</a></p>
+</blockquote>
+
+<blockquote>
+  <p>Traditional reactive streams design involves a back-channel to request more data from producers as needed. Management of this request protocol leads to notoriously difficult implementations even for simple operators. We do not see any of this complexity in the design of Kotlin flows, nor in the implementation of operators for them, yet Kotlin flows do support back-pressure. <a href="https://elizarov.medium.com/simple-design-of-kotlin-flow-4725e7398c4c">source</a></p>
+</blockquote>
+
+<p>The previous example isn’t reactive, but it solves the problem Elizarov highlighted in Flows. Back pressure
+management is achieved by blocking the consumer until more data is needed. The producer waits for the consumer to
+unblock before it fetches more data (half the buffer in the example above).</p>
+
+<p>Flows don’t offer anything new, other than a more elegant way (using the abstraction that is reactivity)
+of implementing the code I wrote above (this is in kotlin now) so that we don’t have to keep solving the problem
+of n blockers getting n threads:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>val image_producer = flow {
+        var images = listOf()
+        while (True) {
+                val future_images = async(IO, fetch_images)
+                image.forEach { emit(it) }
+                future_images.onAwait { images = it }
+        }
+}
+
+val pipeline = image_producer.forEach(consumer)
+
+suspend fun fetch_images() {
+        # do blocking recieving stuff
+        return images
+}
+
+suspend fun consume(image) {
+        # do blocking consuming stuff
+}
+</code></pre></div></div>
+
+<p>This seemingly simple solution seems more complex! But consider more than one consumer:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>val image_producer = flow {
+        images = listOf()
+        while (True) {
+                future_images = async(IO) { fetch_images() }
+                images.forEach { emit(it) }
+                future_images.onAwait { images = it }
+        }
+}
+
+val mapped = image_producer.map(consumer_1).map(consumer_2)
+
+suspend fun fetch_images() {
+        # do blocking recieving stuff
+}
+
+suspend fun consume_1(image) {
+        # do blocking consuming stuff
+        return new_data
+}
+
+suspend fun consume_2(image) {
+        # do blocking consuming stuff
+        return new_data
+}
+</code></pre></div></div>
+
+<p><strong>The producer doesn’t need any knowledge of what the consumer is going to do with the data</strong>. The producer can just blindly emit data and wait for the consumer to notify that it’s done (_of course, this can be done in other solutions such as the ones using semaphores, flows just feel a bit more intuitive).</p>
+
+<p>In our first example, we would’ve had to add more function calls in the <code class="language-plaintext highlighter-rouge">produce</code> function to consume more than one image or output:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>images = []
+async def produce():
+        task = asyncio.create_task(get_images())
+        for image in images:
+                new_images1 = await consume_1(image)
+                new_images2 = await consume_2(image)
+        images = await task
+
+async def consume_1(image):
+        # do blocking consuming stuff
+        return new_images
+
+async def consume_2(image):
+        # do blocking consuming stuff
+        return new_images
+
+async def get_images():
+        # do blocking fetching stuff
+</code></pre></div></div>
+
+<p>Of course, we’re violating the rule that n blocking calls should get n threads and a clever engineer could
+probably come up with a clever solution without reactivity, but the point remains that in this non reactive
+style of thinking, we have to keep coming up with solutions to delegate our task to multiple threads! So
+the real reason reactivity is solving the problem I just mentioned is single responsibility of producers / consumers, letting each producer / consumer get it’s own thread!</p>
+
+<p>Now, we can abstract out the producer and consumer and let multiple software engineers work on
+each block of code seperately!</p>
+
+
+    </div>
+
+<script src="https://utteranc.es/client.js"
+        repo="lincketheo/personal_website"
+        issue-term="pathname"
+        label="comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+</div>
+
+  </body>
+</html>
