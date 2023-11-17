@@ -1,29 +1,12 @@
 <script setup lang="ts">
-import {RouterLink, RouterView} from 'vue-router'
+import {RouterView} from 'vue-router'
+import NavigationBar from "@/ui/NavigationBar.vue";
 </script>
 
 <template>
   <header>
-    <div class="wrapper">
-      <nav>
-        <ul>
-          <li>
-            <RouterLink to="/">Home</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/swe">Software Engineering</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/cs">Computer Science</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/math">Math</RouterLink>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <NavigationBar/>
   </header>
-
   <RouterView/>
 </template>
 

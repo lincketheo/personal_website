@@ -3,6 +3,6 @@
 
 <template>
   <main>
-
+    Computer Science
   </main>
 </template>

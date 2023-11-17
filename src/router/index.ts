@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeIndex from '@/ui/landing/HomeIndex.vue'
+import CSIndex from "@/ui/landing/CSIndex.vue"
+import MathIndex from "@/ui/landing/MathIndex.vue"
+import SWEIndex from "@/ui/landing/SWEIndex.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,7 +10,22 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeIndex
+    },
+    {
+      path: '/cs',
+      name: 'cs',
+      component: CSIndex
+    },
+    {
+      path: '/math',
+      name: 'math',
+      component: MathIndex
+    },
+    {
+      path: '/swe',
+      name: 'swe',
+      component: SWEIndex
     },
   ]
 })
