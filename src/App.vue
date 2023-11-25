@@ -1,18 +1,15 @@
 <script setup lang="ts">
 import {RouterView} from 'vue-router'
-import NavigationBar from "@/ui/NavigationBar.vue";
+import NavigationBar from "@/ui/navigation/NavigationBar.vue";
 import AppFooter from "@/ui/AppFooter.vue";
 </script>
 
 <template>
-  <div class="flex justify-between flex-col h-screen">
-    <div class="mx-[550px]">
-      <NavigationBar/>
-      <RouterView/>
+    <div class="flex h-screen justify-between flex-col">
+      <div class="min-[1770px]:mx-[100px] min-[2000px]:mx-[500px]">
+        <NavigationBar/>
+        <RouterView/>
+      </div>
+      <AppFooter/>
     </div>
-    <div>
-      Lots of text
-    </div>
-    <AppFooter/>
-  </div>
 </template>

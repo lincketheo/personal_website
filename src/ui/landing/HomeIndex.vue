@@ -4,6 +4,8 @@ import AboutSection from "@/ui/home/AboutSection.vue";
 
 <template>
   <main>
-    <AboutSection/>
+    <div>
+      <AboutSection/>
+    </div>
   </main>
 </template>
