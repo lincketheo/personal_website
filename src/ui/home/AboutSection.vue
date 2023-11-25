@@ -4,9 +4,9 @@ import PictureWithTechnologies from "@/ui/home/PictureWithTechnologies.vue";
 
 <template>
   <div class="grid grid-cols-3">
-    <div class="col-span-3 min-[1000px]:col-span-2 text-4xl text-left">
+    <div class="col-span-3 min-[1000px]:col-span-2 text-2xl text-left">
       <div class="flex justify-start">
-        <p class="pb-24 w-[600px]">
+        <p class="pb-16 w-[600px]">
           I build rapid full stack apps consisting of
           <span class="text-androidGreen font-bold">Android</span>,
           <span class="text-iphoneSilver font-bold">IOS</span>,
@@ -16,13 +16,13 @@ import PictureWithTechnologies from "@/ui/home/PictureWithTechnologies.vue";
         </p>
       </div>
       <div class="flex justify-start">
-        <p class="py-24 w-[600px]">
+        <p class="py-16 w-[600px]">
           I think about software architecture patterns so I can break
           domain-specific language barriers.
         </p>
       </div>
       <div class="flex justify-end">
-        <p class="py-24 w-[600px]">
+        <p class="py-16 w-[600px]">
           I received my
           <span class="text-appliedMathBlue font-bold">Applied Math</span>
           and
@@ -34,7 +34,7 @@ import PictureWithTechnologies from "@/ui/home/PictureWithTechnologies.vue";
         </p>
       </div>
       <div class="flex justify-end">
-        <p class="py-24 w-[600px]">
+        <p class="py-16 w-[600px]">
           And I like dancing, swimming and lifting
         </p>
       </div>
