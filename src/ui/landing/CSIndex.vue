@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import CSBlog from "@/ui/cs/CSBlog.vue";
 </script>
 
 <template>
   <main>
-    Computer Science
+    <CSBlog/>
   </main>
 </template>
