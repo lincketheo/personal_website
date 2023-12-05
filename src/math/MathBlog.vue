@@ -1,3 +1,15 @@
+<script setup lang="ts">
+import meta from "@/meta.json"
+
+function fullRoute(route: string) {
+  return meta.math.route + route
+}
+</script>
+
 <template>
-  Hello
+  <ul>
+    <li v-for="post in meta.math.posts" :key="post.title">
+      <a :href="fullRoute(post.route)">{{ post.title }}</a>
+    </li>
+  </ul>
 </template>

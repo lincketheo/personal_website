@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import meta from "@/meta.json"
-import {removeTrailingAndLeadingSlashes} from "@/util/strings";
-
-console.log(meta.cs.posts)
 
 function fullRoute(route: string) {
-  return "/" + removeTrailingAndLeadingSlashes(meta.cs.route) + "/" + removeTrailingAndLeadingSlashes(route)
+  return meta.math.route + route
 }
 </script>
 
