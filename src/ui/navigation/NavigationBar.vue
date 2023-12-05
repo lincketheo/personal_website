@@ -37,8 +37,8 @@ const currentLink = computed(() => {
 
 <template>
   <nav>
-    <ul class="flex justify-end p-20">
-      <li v-for="link in links" :key="link.title" class="px-5 text-2xl flex flex-col justify-center">
+    <ul class="flex justify-end p-2">
+      <li v-for="link in links" :key="link.title" class="px-5 flex flex-col justify-center">
         <SelectedRoute v-if="currentLink === link.name" :link="link"/>
         <NotSelectedRoute v-else :link="link"/>
       </li>

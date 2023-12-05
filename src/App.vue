@@ -6,7 +6,7 @@ import AppFooter from "@/ui/AppFooter.vue";
 
 <template>
     <div class="bg-background text-onBackground flex min-h-screen justify-between flex-col">
-      <div class="min-[1770px]:mx-[100px] min-[2000px]:mx-[500px]">
+      <div class="mx-[500px]">
         <NavigationBar/>
         <RouterView/>
       </div>
