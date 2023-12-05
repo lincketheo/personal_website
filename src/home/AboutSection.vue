@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PictureWithTechnologies from "@/ui/home/PictureWithTechnologies.vue";
+import PictureWithTechnologies from "@/home/PictureWithTechnologies.vue";
 </script>
 
 <template>

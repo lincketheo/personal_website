@@ -1,0 +1,106 @@
+{
+  "cs": {
+    "route": "/cs",
+    "prefix": "cs",
+    "entry": "cs/CSBlog",
+    "nav_title": "Computer Science",
+    "name": "cs",
+    "posts": [
+      {
+        "title": "Building a Bootloader",
+        "date": "2023-04-03",
+        "entry": "posts/building-a-bootloader/BuildingABootloader",
+        "route": "/building-a-bootloader",
+        "name" : "building-a-bootloader",
+        "tags": [
+          "Operating Systems",
+          "Bootloader"
+        ]
+      },
+      {
+        "title": "Kotlin and Error Handling",
+        "date": "2023-02-08",
+        "entry": "posts/kotlin-error-handling/KotlinErrorHandling",
+        "route": "/kotlin-error-handling",
+        "name" : "kotlin-error-handling",
+        "tags": [
+          "Error Handling",
+          "Kotlin"
+        ]
+      },
+      {
+        "title": "On Pattern Recognition and Closed Systems",
+        "date": "2023-05-22",
+        "entry": "posts/pattern-recognition/PatternRecognition",
+        "route": "/pattern-recognition",
+        "name" : "pattern-recognition",
+        "tags": [
+          "Machine Learning"
+        ]
+      },
+      {
+        "title": "Predicting Solar Flares Using Machine Learning",
+        "date": "2022-05-22",
+        "entry": "posts/solar-flare/SolarFlareForecasting",
+        "route": "/solar-flare-forecasting",
+        "name" : "solar-flare-forecasting",
+        "tags": [
+          "Solar Flares",
+          "Machine Learning"
+        ]
+      }
+    ]
+  },
+  "math": {
+    "route": "/math",
+    "prefix": "math",
+    "entry": "math/MathBlog",
+    "nav_title": "Math",
+    "name" : "math",
+    "posts": [
+      {
+        "title": "Measure Theory",
+        "date": "2023-02-08",
+        "entry": "posts/measure-theory/MeasureTheory",
+        "route": "/measure-theory",
+        "name" : "measure-theory",
+        "tags": [
+          "Error Handling",
+          "Kotlin"
+        ]
+      },
+      {
+        "title": "Cantor, Natural Numbers and Formal Systems",
+        "date": "2023-05-07",
+        "entry": "posts/nn-systems-cantor/NNSystemsCantor",
+        "route": "/nn-systems-cantor",
+        "name" : "nn-systems-cantor",
+        "tags": [
+          "Natural Numbers",
+          "Formal Systems",
+          "Set Theory"
+        ]
+      },
+      {
+        "title": "Some Silly Paradoxes",
+        "date": "2023-05-14",
+        "entry": "posts/paradoxes/SillyParadoxes",
+        "route": "/silly-paradoxes",
+        "name" : "silly-paradoxes",
+        "tags": [
+          "Paradoxes"
+        ]
+      },
+      {
+        "title": "On Pattern Recognition and Closed Systems",
+        "date": "2023-05-22",
+        "entry": "posts/pattern-recognition/PatternRecognition",
+        "route": "/pattern-recognition",
+        "name" : "pattern-recognition",
+        "tags": [
+          "Machine Learning"
+        ]
+      }
+    ]
+  }
+}

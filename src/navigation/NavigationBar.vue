@@ -1,31 +1,28 @@
 <script setup lang="ts">
 
-import {RouterLink, useRouter} from "vue-router";
+import {useRouter} from "vue-router";
 import {computed} from "vue";
-import SelectedRoute from "@/ui/navigation/SelectedRoute.vue";
-import NotSelectedRoute from "@/ui/navigation/NotSelectedRoute.vue";
+import SelectedRoute from "@/navigation/SelectedRoute.vue";
+import NotSelectedRoute from "@/navigation/NotSelectedRoute.vue";
+import meta from "@/meta.json"
+
+let _meta = meta as any
+
+const blog_links = Object.keys(_meta).map(key => {
+  return {
+    title: _meta[key].nav_title,
+    link: _meta[key].route,
+    name: _meta[key].name,
+  }
+})
 
 const links = [
   {
     title: "Home",
     link: '/',
-    name: 'home'
+    name: "home"
   },
-  {
-    title: "Computer Science",
-    link: '/cs',
-    name: 'cs'
-  },
-  {
-    title: "Math",
-    link: '/math',
-    name: 'math'
-  },
-  {
-    title: "Software Engineering",
-    link: '/swe',
-    name: 'swe'
-  }
+    ...blog_links
 ]
 
 const router = useRouter()

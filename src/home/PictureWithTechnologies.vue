@@ -5,13 +5,13 @@
 <template>
   <div class="main-container">
     <div class="circle-element-container" style="--total: 6">
-      <img class="absolute rounded-full center-image" src="@/assets/myface.jpg" alt="Face Picture">
-      <img class="circle-element" style="--i:1" src="@/assets/Android-Logo-2014.png" alt="Android Logo">
-      <img class="circle-element" style="--i:2" src="@/assets/IOS.png" alt="IOS Logo">
-      <img class="circle-element" style="--i:3" src="@/assets/Kotlin.png" alt="Kotlin">
-      <img class="circle-element rounded-full" style="--i:4" src="@/assets/springboot.png" alt="Spring Boot">
-      <img class="circle-element" style="--i:5" src="@/assets/clogo.png" alt="C Logo">
-      <img class="circle-element" style="--i:6" src="@/assets/linuxlogo.png" alt="Linux Logo">
+      <img class="absolute rounded-full center-image" src="../assets/myface.jpg" alt="Face Picture">
+      <img class="circle-element" style="--i:1" src="../assets/Android-Logo-2014.png" alt="Android Logo">
+      <img class="circle-element" style="--i:2" src="../assets/IOS.png" alt="IOS Logo">
+      <img class="circle-element" style="--i:3" src="../assets/Kotlin.png" alt="Kotlin">
+      <img class="circle-element rounded-full" style="--i:4" src="../assets/springboot.png" alt="Spring Boot">
+      <img class="circle-element" style="--i:5" src="../assets/clogo.png" alt="C Logo">
+      <img class="circle-element" style="--i:6" src="../assets/linuxlogo.png" alt="Linux Logo">
     </div>
   </div>
 </template>
