@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import meta from "@/meta.json"
-
-function fullRoute(route: string) {
-  return meta.math.route + route
-}
+const formula = '$$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}.$$'
 </script>
 
 <template>
-  <ul>
-    <li v-for="post in meta.cs.posts" :key="post.title">
-      <a :href="fullRoute(post.route)">{{ post.title }}</a>
-    </li>
-  </ul>
+  <div v-for="post in meta.cs.posts" :key="post.name">
+    <hr class="rounded">
+    <p class="font-bold">{{ post.title }}</p>
+    <p>
+      {{ post.description }}
+    </p>
+    <a :href="post.route">more...</a>
+  </div>
+  <vue-mathjax :formula="formula"></vue-mathjax>
 </template>

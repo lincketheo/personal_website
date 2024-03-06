@@ -10,8 +10,10 @@
         "title": "Building a Bootloader",
         "date": "2023-04-03",
         "entry": "posts/building-a-bootloader/BuildingABootloader",
-        "route": "/building-a-bootloader",
+        "route": "/cs/building-a-bootloader",
+        "description": "I'll build a bootloader from scratch for an Intel x86 32-bit processor in this post. You should have some assembly experience before embarking on your bootloader journey.",
         "name" : "building-a-bootloader",
+        "popular" : true,
         "tags": [
           "Operating Systems",
           "Bootloader"
@@ -21,8 +23,10 @@
         "title": "Kotlin and Error Handling",
         "date": "2023-02-08",
         "entry": "posts/kotlin-error-handling/KotlinErrorHandling",
-        "route": "/kotlin-error-handling",
+        "route": "/cs/kotlin-error-handling",
+        "description": "Handling errors cleanly in Kotlin. Which layer do I handle my exceptions and how do I prevent try catch hell?",
         "name" : "kotlin-error-handling",
+        "popular" : true,
         "tags": [
           "Error Handling",
           "Kotlin"
@@ -32,8 +36,10 @@
         "title": "On Pattern Recognition and Closed Systems",
         "date": "2023-05-22",
         "entry": "posts/pattern-recognition/PatternRecognition",
-        "route": "/pattern-recognition",
+        "route": "/cs/pattern-recognition",
+        "description": "Owl: Whoo, well who-ello my friends, I'm delighted to have you stop by just in time for my extra delicious Banana flavored tea with spam, eggs and fried marmot!",
         "name" : "pattern-recognition",
+        "popular" : false,
         "tags": [
           "Machine Learning"
         ]
@@ -42,8 +48,10 @@
         "title": "Predicting Solar Flares Using Machine Learning",
         "date": "2022-05-22",
         "entry": "posts/solar-flare/SolarFlareForecasting",
-        "route": "/solar-flare-forecasting",
+        "route": "/cs/solar-flare-forecasting",
+        "description": "Predicting solar flares using machine learning. In this post, I'll build a math library to calculate various constants from a solar magnetogram then predict if it's going to flare in the near future.",
         "name" : "solar-flare-forecasting",
+        "popular" : false,
         "tags": [
           "Solar Flares",
           "Machine Learning"
@@ -62,8 +70,10 @@
         "title": "Measure Theory",
         "date": "2023-02-08",
         "entry": "posts/measure-theory/MeasureTheory",
-        "route": "/measure-theory",
+        "route": "/math/measure-theory",
+        "description": "In this post, I will first lay the basic analysis groundwork needed to understand Borel Sigma Algebras (and of course, I will also explain sigma algebras). Then I will explain the basics of Measure Theory necessary for defining Lp and weak-Lp spaces in subsequent blog posts.",
         "name" : "measure-theory",
+        "popular" : false,
         "tags": [
           "Error Handling",
           "Kotlin"
@@ -73,8 +83,10 @@
         "title": "Cantor, Natural Numbers and Formal Systems",
         "date": "2023-05-07",
         "entry": "posts/nn-systems-cantor/NNSystemsCantor",
-        "route": "/nn-systems-cantor",
+        "route": "/math/nn-systems-cantor",
+        "description": "In this post, I will explore some properties of natural numbers and abstract systems in mathematics.",
         "name" : "nn-systems-cantor",
+        "popular" : true,
         "tags": [
           "Natural Numbers",
           "Formal Systems",
@@ -85,20 +97,12 @@
         "title": "Some Silly Paradoxes",
         "date": "2023-05-14",
         "entry": "posts/paradoxes/SillyParadoxes",
-        "route": "/silly-paradoxes",
+        "route": "/math/silly-paradoxes",
+        "description": "In this post, I will explore some interesting paradoxes. I'll probably add to this post in the future, but for now, I just want this post to be about some silly little paradoxes that have shown up in math in the past.",
         "name" : "silly-paradoxes",
+        "popular" : true,
         "tags": [
           "Paradoxes"
-        ]
-      },
-      {
-        "title": "On Pattern Recognition and Closed Systems",
-        "date": "2023-05-22",
-        "entry": "posts/pattern-recognition/PatternRecognition",
-        "route": "/pattern-recognition",
-        "name" : "pattern-recognition",
-        "tags": [
-          "Machine Learning"
         ]
       }
     ]

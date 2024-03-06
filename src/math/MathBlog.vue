@@ -1,15 +1,24 @@
-<script setup lang="ts">
-import meta from "@/meta.json"
+<template>
+  <div class="hello">
+    <textarea v-model="formula" />
+    <vue-mathjax :formula="formula" />
+  </div>
+</template>
 
-function fullRoute(route: string) {
-  return meta.math.route + route
-}
+<script setup>
+import {onMounted, ref} from 'vue'
+const formula = ref('$$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}.$$')
+
+onMounted(() => {
+
+})
 </script>
 
-<template>
-  <ul>
-    <li v-for="post in meta.math.posts" :key="post.title">
-      <a :href="fullRoute(post.route)">{{ post.title }}</a>
-    </li>
-  </ul>
-</template>
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+textarea {
+  min-height: 60px;
+}
+</style>
+
+

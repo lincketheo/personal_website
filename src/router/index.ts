@@ -27,7 +27,7 @@ const sub_routes = Object.keys(_meta).flatMap(key => {
     return posts.map(post => {
         const full_entry = `/${_meta[key].prefix}/${post.entry}`
         return {
-            path: _meta[key].route + post.route,
+            path: post.route,
             component: () => import("../" + full_entry + ".vue"),
             name: post.name,
         }
