@@ -1,19 +1,25 @@
 <template>
 <h2>Introduction: Some Measure Theory</h2>
+
 <p>In this post, I will first lay the basic analysis groundwork needed to understand Borel Sigma Algebras (and of
     course, I will also explain sigma algebras). Then I will explain the basics of Measure Theory necessary for defining
     $L^p$ and weak-$L^p$ spaces in subsequent blog posts.</p>
+
 <p>Most of this post's reference material comes from my own notes on Analysis, but these notes came from <a
         href="https://www.amazon.com/Analysis-Third-Texts-Readings-Mathematics/dp/9380250649">Terence Tao's</a> series
     on analysis. These are very readable introductions to analysis and I highly recommend them.</p>
+
 <h2>Metric Spaces and Topologies (A prerequisite to the Borel Sigma Algebra)</h2>
+
 <h3>Metric Space</h3>
+
 <p>Roughly speaking, a metric is a way to measure distance between two things and map that distance to the real line. It
     maps an ordered pair of a set $X$ to the real numbers: $d : X \times X \rightarrow \mathbb{R}$ given the following
     rules:</p>
-<p>For any two $x, y \in X$:</p>
+
+<p>For any two <vue-mathjax formula="$x, y \in X$"/>:</p>
 <ol>
-    <li>Positive: $d(x, y) \geq 0$</li>
+    <li>Positive: <vue-mathjax formula="$d(x, y) \geq 0$"/></li>
     <li>Positive Definiteness: $d(x, y) = 0 \leftrightarrow x = y$</li>
     <li>Commutativity: $d(x, y) = d(y, x)$</li>
     <li>Triangle Inequality: $d(x, y) \leq d(x, z) + d(z, y)$</li>

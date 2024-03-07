@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import meta from "../meta.json"
 
+/**
+ * All posts meta data
+ * Sorted by date
+ */
 const all = meta.cs.posts
     .concat(meta.math.posts)
     .sort((a, b) => new Date(a.date) < new Date(b.date) ? 1 : -1)
 
+// Recent posts
 const recent = all.slice(0, 4)
-const popular = all.filter(it => it.popular)
 
-/**
- const recent = all.sort((a: any, b: any) => {
- const aDate = new Date(a.date)
- const bDate = new Date(b.date)
- return aDate > bDate
- })
- **/
+// Popular Posts
+const popular = all.filter(it => it.popular)
 </script>
 
 <template>
   <main class="mx-10">
+    <p><em>Working on a new format using VueJS and tailwind. Website will be changing form as I get better at design</em></p>
     <div class="grid-cols-4 grid gap-16">
       <p class="col-span-3 p-10">
         Software Engineering is a complex blend of mathematics, philosophy, logic and business.
@@ -47,7 +47,7 @@ const popular = all.filter(it => it.popular)
       </p>
       <div class="col-span-1 flex flex-col items-center">
         <div>
-          <img class="w-[200px] h-[200px]" src="@/assets/myface.jpg" alt="My Face"/>
+          <img class="w-[200px] h-[200px] mt-10" src="@/assets/myface.jpg" alt="My Face"/>
           <h5 class="font-bold pt-10">Theo Lincke</h5>
         </div>
       </div>
@@ -68,7 +68,7 @@ const popular = all.filter(it => it.popular)
         <div>
           <h1 class="text-xl">Popular</h1>
           <div class="grid grid-cols-2 gap-4 p-10 border-solid border-2">
-            <div v-for="post in popular">
+            <div v-for="post in popular" :key="post.date">
               <p class="font-bold">{{ post.title }}</p>
               <p>
                 {{ post.description }}

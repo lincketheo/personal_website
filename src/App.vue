@@ -5,7 +5,7 @@ import NavigationBar from "@/navigation/NavigationBar.vue";
 
 <template>
     <div>
-      <div>
+      <div class="mx-96">
         <NavigationBar/>
         <RouterView/>
       </div>
