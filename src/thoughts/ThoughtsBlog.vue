@@ -5,7 +5,7 @@ import { meta } from "@/meta"
 <template>
   <div class="flex flex-row justify-center">
     <div class="w-[1024px]">
-      <div v-for="post in meta.math.posts" :key="post.name">
+      <div v-for="post in meta.thoughts.posts" :key="post.name">
         <hr class="rounded">
         <p class="font-bold">{{ post.title }}</p>
         <p>

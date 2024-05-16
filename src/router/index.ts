@@ -1,40 +1,28 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import HomeIndex from '@/home/HomeIndex.vue'
-import meta from "@/meta.json"
+import { meta } from "@/meta"
+import {postToVueRoute, topicToVueRoute} from "@/models";
 
-// TODO - might want to add types to this meta blob
-const _meta = meta as any
+/**
+ * All the meta information about the blog
+ * TODO - add typing
+ */
 
-const blog_routes = Object.keys(_meta).map(key => {
-    return {
-        path: _meta[key].route,
-        component: () => import("../" + _meta[key].entry + ".vue"),
-        name: _meta[key].name
-    }
-})
-
-const main_routes = [
+const routes = [
     {
         path: '/',
         component: HomeIndex,
         name: "home"
     },
-    ...blog_routes
+    topicToVueRoute(meta.cs),
+    topicToVueRoute(meta.math),
+    topicToVueRoute(meta.thoughts),
+    topicToVueRoute(meta.projects),
+    ...(meta.cs.posts.map(it => postToVueRoute(it, meta.cs))),
+    ...(meta.math.posts.map(it => postToVueRoute(it, meta.math))),
+    ...(meta.thoughts.posts.map(it => postToVueRoute(it, meta.thoughts))),
+    ...(meta.projects.posts.map(it => postToVueRoute(it, meta.projects)))
 ]
-
-const sub_routes = Object.keys(_meta).flatMap(key => {
-    const posts: any[] = _meta[key].posts
-    return posts.map(post => {
-        const full_entry = `/${_meta[key].prefix}/${post.entry}`
-        return {
-            path: post.route,
-            component: () => import("../" + full_entry + ".vue"),
-            name: post.name,
-        }
-    })
-})
-
-const routes = [...main_routes, ...sub_routes]
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
