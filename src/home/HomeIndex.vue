@@ -61,7 +61,8 @@ const popular = all.filter(it => it.popular)
         <p class="indent-5">
           This website is built using Vue3. I'm self hosting the website using a Kubernetes cluster
           in my <a href="https://github.com/lincketheo/homelab" class="underline text-primary dark:text-primary-dark">homelab</a>.
-          It's self contained in a single Docker Container with an nginx proxy.
+          It's self contained in a single Docker Container with an nginx proxy. To be clear, that is definitely overengineering.
+          There's also some cloudflare and certificate management and CI/CD sprinkled in there too.
         </p>
       </div>
       <div>
