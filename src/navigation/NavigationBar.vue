@@ -47,7 +47,7 @@ const currentLink = computed(() => {
   <nav class="bg-surface dark:bg-surface-dark p-16">
     <div class="flex flex-wrap items-center justify-between">
       <a href="/">
-        <span class="text-2xl font-bold text-primary dark:text-primary-dark">theolincke-blog.com</span>
+        <span class="text-2xl font-bold text-primary dark:text-primary-dark">theolincke.com</span>
       </a>
       <ul class="flex flex-row space-x-8">
         <li v-for="link in links" :key="link.name">
