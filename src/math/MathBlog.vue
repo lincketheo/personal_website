@@ -3,16 +3,14 @@ import { meta } from "@/meta"
 </script>
 
 <template>
-  <div class="flex flex-row justify-center">
-    <div class="w-[1024px]">
-      <div v-for="post in meta.math.posts" :key="post.name">
-        <hr class="rounded">
-        <p class="font-bold">{{ post.title }}</p>
-        <p>
-          {{ post.description }}
-        </p>
-        <a :href="post.route">more...</a>
-      </div>
+  <div class="mt-10">
+    <div class="mb-5" v-for="post in meta.math.posts" :key="post.name">
+      <hr class="rounded">
+      <a class="font-bold" :href="post.route">{{ post.title }}</a>
+      <p>
+        {{ post.description }}
+      </p>
+      <a class="text-primary dark:text-primary-dark" :href="post.route">more...</a>
     </div>
   </div>
 </template>

@@ -104,14 +104,5 @@ export const meta: MetaInformation = {
         ]
       }
     ]
-  },
-  projects: {
-    route: "/projects",
-    prefix: "projects",
-    entry: () => import("./projects/ProjectsBlog.vue"),
-    nav_title: "Projects",
-    name: "projects",
-    posts: [
-    ]
   }
 }
