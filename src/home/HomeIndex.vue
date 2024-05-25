@@ -56,7 +56,7 @@ const popular = all.filter(it => it.popular)
       <div>
         <h1 class="text-xl">Popular</h1>
         <div class="grid grid-cols-2 gap-4 p-10 bg-surface dark:bg-surface-dark">
-          <div class="text-on-surface dark:text-on-surface" v-for="post in popular" v-bind:key='post'>
+          <div class="text-on-surface dark:text-on-surface" v-for="post in popular" v-bind:key='post.route'>
             <p class="font-bold">{{ post.title }}</p>
             <p>
             {{ post.description }}

@@ -4,7 +4,6 @@ export interface MetaInformation {
     cs: Topic
     math: Topic
     thoughts: Topic
-    projects: Topic
 }
 
 interface Topic {
