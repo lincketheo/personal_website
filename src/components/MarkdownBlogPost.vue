@@ -17,6 +17,6 @@ fetch(props.route).then(async it => {
   <p v-if="mathjaxmsg" class="pb-10 italic">Some of the formula on this page are rendered using MathJax. If they don't
     render immediately, you can just hard reload (Ctrl+Shift+R).</p>
   <div class="flex-row justify-center">
-    <article class="prose max-w-none dark:prose-invert" v-html="mkhtml"></article>
+    <article class="prose max-w-none text-on-background dark:text-on-background-dark" v-html="mkhtml"></article>
   </div>
 </template>

@@ -29,14 +29,14 @@ module.exports = {
 					dark: '#EC8922',
 				},
 				background: {
-					light: '#F1E6C7',
+					light: '#FEFAE5',
 					DEFAULT: '#FEFAE5',
 					dark: '#F1E6C7',
 				},
 				surface: {
 					light: '#191B0E',
 					DEFAULT: '#191B0E',
-					dark: '#F1E6C7',
+					dark: '#191B0E',
 				},
 				error: {
 					light: '#B00020',
@@ -59,9 +59,9 @@ module.exports = {
 					dark: '#000000',
 				},
 				'on-surface': {
-					light: '#333333',
+					light: '#FEFAE5',
 					DEFAULT: '#FEFAE5',
-					dark: '#333333',
+					dark: '#FEFAE5',
 				},
 				'on-error': {
 					light: '#FFFFFF',
