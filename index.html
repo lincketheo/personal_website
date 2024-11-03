@@ -1,21 +1,136 @@
-<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="icon" type="image/x-icon" href="/favico.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Spanish Inquisition</title>
-      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-      <script type="text/x-mathjax-config">
-          MathJax.Hub.Config({
-        tex2jax: {
-          inlineMath: [['$','$'],['\\(','\\)']]
-        }
-      });
-      </script>
-      <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML"></script>
-  <body class="bg-background dark:bg-background-dark text-on-background dark:text-on-background-dark min-h-screen">
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+<head>
+  <script src="https://kit.fontawesome.com/37ef92ef0a.js" crossorigin="anonymous"></script>
+  <title>Theo Lincke</title>
+  <link rel="stylesheet" href="css/main.css"></link>
+</head>
+<body>
+<header id="top_nav_bar">
+  <div id="top_nav_bar_title">
+    <span>Theo Lincke</span>
+  </div>
+  <ul id="top_nav_bar_links">
+    <li><a>Home</a></li>
+    <li><a>Software</a></li>
+    <li><a>Blog</a></li>
+    <li><a>About</a></li>
+    <li><a>Contact</a></li>
+  </ul>
+</header>
+<section id="about">
+  <div id="about_img">
+    <img class="img-md img-round" src="img/face.png" alt="Face">
+  </div>
+  <div id="about_text">
+    <h3>About</h3>
+    <p>
+      In a fast-evolving software landscape, these four guiding principles can serve as a reliable north star:
+    <ol>
+      <li>
+        <b>Do what's best for the user:</b>
+        When we find ourselves deep in a problem, always take a step
+        back and reflect. The solution that matters is the one that increases the livelihood, user experience,
+        utility and satisfaction of the end user.
+      </li>
+      <li>
+        <b>Simplicity and Usability:</b>
+        Engineers love to solve problems, which often means we invent unnecessary problems to be solved.
+        Automate/abstract when it will lead to a better product or service; but
+        Complexity for the sake of complexity is always a bad idea.
+      </li>
+      <li>
+        <b>Ethical Data is the Shovel of AI:</b>
+        AI's potential depends on the data that fuels it, and users don't appreciate implicit data collection.
+        Make responsible tools that make data and trends so obvious, you'd have to struggle to find hidden data
+        collection services.
+      </li>
+      <li>
+        <b>The Value of Skilled Engineers:</b>
+        Systems like Agile or Scrum provide structure, but ultimately, it's dedicated, skilled engineers
+        who drive success. Be principled in your software decisions, and be humble to others.
+        Maximize your and others' skills while minimizing ego.
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section id="featured_software">
+  <h3>Featured Software</h3>
+  <div id="featured_software_cards">
+    <div class="featured_card">
+      <div class="product_image">Product Image 1</div>
+      <h4>Ray Tracer</h4>
+      <p>A ray tracer in C</p>
+      <button>Try Demo</button>
+    </div>
+    <div class="featured_card">
+      <div class="product_image">Product Image 1</div>
+      <h4>Solar Mask</h4>
+      <p>Solar flare prediction software in python</p>
+      <button>Try Demo</button>
+    </div>
+    <div class="featured_card">
+      <div class="product_image">Product Image 1</div>
+      <h4>Stringlang</h4>
+      <p>A programming language that uses string generation rules to prove
+        "theorems"</p>
+      <button>Try Demo</button>
+    </div>
+  </div>
+</section>
+
+<section id="featured_posts">
+  <h3>Featured Posts</h3>
+  <div id="featured_blog_cards">
+    <div class="featured_card">
+      <div class="product_image">Product Image 1</div>
+      <h4>Ray Tracer in C</h4>
+      <p>A ray tracer in C</p>
+      <button>Try Demo</button>
+    </div>
+    <div class="featured_card">
+      <div class="product_image">Product Image 1</div>
+      <h4>Solar Mask</h4>
+      <p>Solar flare prediction software in python</p>
+      <button>Try Demo</button>
+    </div>
+    <div class="featured_card">
+      <div class="product_image">Product Image 1</div>
+      <h4>Stringlang</h4>
+      <p>A programming language that uses string generation rules to prove
+        "theorems"</p>
+      <button>Try Demo</button>
+    </div>
+  </div>
+</section>
+
+<footer id="footer">
+  <div id="footer_content">
+    <div id="footer_quick_links">
+      <h6>Quick Links</h6>
+      <ul>
+        <li><a>Home</a></li>
+        <li><a>Software</a></li>
+        <li><a>Blog</a></li>
+        <li><a>About</a></li>
+        <li><a>Contact</a></li>
+      </ul>
+    </div>
+    <div id="footer_connect">
+      <h6>Connect</h6>
+      <ul>
+        <li><i class="fa-brands fa-github"></i></li>
+        <li><i class="fa-brands fa-linkedin"></i></li>
+      </ul>
+    </div>
+    <div id="footer_contact">
+      <h6>Contact</h6>
+      <p>Email: lincketheo@gmail.com</p>
+    </div>
+  </div>
+  <div id="footer_copyright">
+    <p>(c) 2025 LinckeVision. All rights reserved.</p>
+  </div>
+</footer>
+</body>
 </html>
