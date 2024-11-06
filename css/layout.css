@@ -1,12 +1,8 @@
-@import "_variables.css";
-
 #top_nav_bar {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  background: var(--surface);
-  color: var(--on-surface);
 }
 
 #top_nav_bar_title {
@@ -21,62 +17,6 @@
 #top_nav_bar_links li {
   display: inline;
   padding: 10px 40px;
-}
-
-#about {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-#about_img {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-}
-
-#about_text {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: start;
-  flex: 3;
-}
-
-#about_text li {
-  margin: 20px;
-}
-
-#featured_software {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-#featured_software_cards {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-}
-
-#featured_posts {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-#featured_blog_cards {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
 }
 
 #footer {
@@ -114,6 +54,7 @@
 
 #footer_connect ul li {
   display: inline;
+  margin-right: 10px;
 }
 
 #footer_contact {
