@@ -1,34 +1,29 @@
 :root {
-  --background: #0d1b2a;
-  --background-variant: #1a2e45;
+  --background: #FFFFFF;
+  --background-hover: #CCCCCC;
+  --surface: #FFFFFF;
 
-  --surface-on-background: #1e3553;
-  --surface-on-background-variant: #2e4a6b;
+  --on-background: #000000;
+  --on-surface: #000000;
 
-  --on-background: #e0e1dd;
-  --on-background-variant: #b8c5d3;
-  --on-surface-on-background: #d1e0f0;
-  --on-surface-on-background-variant: #a6b5c3;
-
-  --primary: #336699;
-  --primary-variant: #274d73;
-  --primary-dark: #1a3a59;
+  --primary: #002173;
+  --primary-variant: #3700B3;
+  --on-primary: #FFFFFF;
   --primary-hover: #2a5277;
-  --on-primary: #f0f4f8;
   --on-primary-hover: #d8e7f4;
 
-  --secondary: #4a90e2;
-  --secondary-variant: #376ba3;
+  --secondary: #03DAC6;
+  --secondary-variant: #018786;
   --secondary-hover: #3e7fbf;
-  --on-secondary: #dce6f2;
-  --on-secondary-hover: #b0c4de;
+  --on-secondary: #000000;
+  --on-secondary-hover: #000000;
 
   --success: #2ecc71;
   --success-hover: #28a65b;
   --on-success: #ffffff;
   --on-success-hover: #e8f7ec;
 
-  --error: #d9534f;
+  --error: #B00020;
   --error-hover: #c43c36;
   --on-error: #ffffff;
   --on-error-hover: #f9e8e7;
@@ -39,19 +34,14 @@
   color: var(--on-background);
 }
 
-.background-variant {
-  background-color: var(--background-variant);
-  color: var(--on-background-variant);
+.background.hoverable:hover {
+  background-color: var(--background-hover);
+  color: var(--on-background);
 }
 
-.background .surface {
-  background-color: var(--surface-on-background);
-  color: var(--on-surface-on-background);
-}
-
-.background-variant .surface {
-  background-color: var(--surface-on-background-variant);
-  color: var(--on-surface-on-background-variant);
+.surface {
+  background-color: var(--surface);
+  color: var(--on-surface);
 }
 
 .primary {
@@ -59,7 +49,12 @@
   color: var(--on-primary);
 }
 
-.primary:hover {
+.primary_variant {
+  background-color: var(--primary-variant);
+  color: var(--on-primary);
+}
+
+.primary.hoverable:hover {
   background-color: var(--primary-hover);
 }
 
@@ -67,3 +62,13 @@
   background-color: var(--secondary);
   color: var(--on-secondary);
 }
+
+.secondary_variant {
+  background-color: var(--secondary-variant);
+  color: var(--on-secondary);
+}
+
+.secondary.hoverable:hover {
+  background-color: var(--secondary-hover);
+}
+

@@ -1,0 +1,33 @@
+.img-round {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.img-square {
+  overflow: hidden;
+  object-fit: cover;
+}
+
+.img-sm {
+  width: 100px;
+  height: 100px;
+}
+
+.img-md {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+}
+
+.imgw-md {
+  width: 100%;
+  height: 250px;
+}
+
+.imgw-lg {
+  width: 100%;
+  height: 1000px;
+}
+
+

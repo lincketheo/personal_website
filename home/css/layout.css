@@ -1,8 +1,13 @@
+main {
+  padding: 0;
+  margin: 0;
+}
 
 #about {
   display: flex;
   flex-direction: row;
   align-items: center;
+  margin: 50px 0;
 }
 
 #about_img {
@@ -30,6 +35,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 50px 0;
 }
 
 #featured_software_cards {
@@ -45,6 +51,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 50px 0;
 }
 
 #featured_blog_cards {

@@ -1,22 +1,19 @@
 #top_nav_bar {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-}
-
-#top_nav_bar_title {
-  padding-left: 10vw;
-  flex-grow: 2;
-}
-
-#top_nav_bar_links {
-  flex-grow: 3;
+  padding: 10px 40px;
 }
 
 #top_nav_bar_links li {
   display: inline;
-  padding: 10px 40px;
+  padding: 0 40px;
+}
+
+#top_nav_bar_title {
+  font-size: 2rem;
+  font-weight: bold;
 }
 
 #footer {
