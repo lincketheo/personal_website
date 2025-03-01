@@ -1,0 +1,5 @@
+- [ ] Write out My reading list
+- [ ] Write out board games
+- [ ] Write out smart garden
+- [ ] Write out how I built this website
+- [ ] Host on a provider

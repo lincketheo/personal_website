@@ -10,14 +10,6 @@ main {
   justify-content: space-between;
 }
 
-#banner {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: var(--height);
-}
-
 #about_theo_lincke {
   padding: var(--height) 25vw;
   display: flex;
@@ -25,14 +17,6 @@ main {
   justify-content: center;
   align-items: center;
   gap: 5rem;
-}
-
-#mission_statement {
-  padding: var(--height) 25vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
 #experience {
@@ -67,14 +51,5 @@ main {
 .experience_item .description {
   margin-top: 0.5rem;
   line-height: 1.5;
-}
-
-#ready_to_create_something {
-  padding: var(--height);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
 }
 
